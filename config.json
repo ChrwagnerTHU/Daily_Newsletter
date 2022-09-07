@@ -6,7 +6,7 @@
         "PORT": 587
     },
     "User": {
-        "RECIEVER": "",
-        "LOCATION": ""
+        "RECIEVER": "  ",
+        "LOCATION": "  "
     }
 }
