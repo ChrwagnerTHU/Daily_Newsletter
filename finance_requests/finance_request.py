@@ -32,8 +32,6 @@ print("Download: ")
 # get eur-usd price
 eur_usd = pdr.get_data_yahoo("EURUSD=X", period = "1d", interval = "1d", auto_adjust = True, group_by = 'ticker').iat[0,3]
 
-tickerStrings = ['AAPL', 'AMZN']
-
 # use sets to avoid duplicates of symbols
 stocks = set()
 cryptos = set()
