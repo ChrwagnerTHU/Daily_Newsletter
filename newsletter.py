@@ -14,6 +14,8 @@ import asyncio
 # Define global variables and set with config from config.json
 def init():
     with open ("config.json", "r") as f:
+        data = json.load(f)
+        print(data)
         global SENDER
         global PWD
         global MAILSERVER
@@ -21,12 +23,12 @@ def init():
         global RECIEVER
         global LOCATION
 
-        SENDER = f.Data.SENDER
-        PWD = f.Data.PWD
-        MAILSERVER = f.Data.MAILSERVER
-        PORT = f.Data.PORT
-        RECIEVER = f.User.RECIEVER
-        LOCATION = f.User.LOCATION
+        SENDER = data['App']['SENDER']
+        PWD = data['App']['PWD']
+        MAILSERVER = data['App']['MAILSERVER']
+        PORT = data['App']['PORT']
+        RECIEVER = data['User']['RECIEVER']
+        LOCATION = data['User']['LOCATION']
 
 # Metod returns current date in readable format
 def get_date():
