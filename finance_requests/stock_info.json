@@ -1,0 +1,40 @@
+{
+    "info": {
+        "stocks": true,
+        "etfs": true,
+        "cryptos": true,
+        "news": false,
+        "summary": true,
+        "display_all": true
+    },
+    "stocks": [
+        {
+            "symbol": "AMZN",
+            "quantity": 40,
+            "purchase_price": 100,
+            "currency": "USD"
+        },
+        {
+            "symbol": "AIR",
+            "quantity": 40,
+            "purchase_price": 100,
+            "currency": "USD"
+        }
+    ],
+    "etfs": [
+        {
+            "symbol": "URTH",
+            "quantity": 10,
+            "purchase_price": 150,
+            "currency": "EUR"
+        }
+    ],
+    "cryptos": [
+        {
+            "symbol": "ETH-USD",
+            "quantity": 1.2,
+            "purchase_price": 2700,
+            "currency": "USD"
+        }
+    ]
+}
