@@ -1,0 +1,12 @@
+{
+    "App": {
+        "SENDER": "cw_assistant@gmx.de",
+        "PWD": "GMXPW2022$",
+        "MAILSERVER": "mail.gmx.de",
+        "PORT": 587
+    },
+    "User": {
+        "RECIEVER": "  ",
+        "LOCATION": "  "
+    }
+}
