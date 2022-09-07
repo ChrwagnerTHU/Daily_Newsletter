@@ -1,3 +1,5 @@
+import json
+
 from datetime import date
 from string import Template 
 from bs4 import BeautifulSoup
@@ -8,13 +10,23 @@ import smtplib
 
 import python_weather
 import asyncio
+ 
+# Define global variables and set with config from config.json
+def init():
+    with open ("config.json", "r") as f:
+        global SENDER
+        global PWD
+        global MAILSERVER
+        global PORT
+        global RECIEVER
+        global LOCATION
 
-SENDER = 'cw_assistant@gmx.de'
-RECIEVER = 'christopher-wagner.ruhp@hotmail.de'
-PWD = 'GMXPW2022$'
-MAILSERVER = 'mail.gmx.de'
-PORT = 587
-LOCATION = 'Ulm'
+        SENDER = f.Data.SENDER
+        PWD = f.Data.PWD
+        MAILSERVER = f.Data.MAILSERVER
+        PORT = f.Data.PORT
+        RECIEVER = f.User.RECIEVER
+        LOCATION = f.User.LOCATION
 
 # Metod returns current date in readable format
 def get_date():
@@ -47,16 +59,22 @@ async def get_weather(location):
             break
         return temp, desc, avg
 
+# TODO: Read Appointments from Calendar
+def get_appointments():
+    # Outlook Calendar API
+    return""
+
+# TODO: Get Stockmarket data
+def get_stockData():
+    return""
 
 # Main method
 def main():
-    # Change day to todays date
-    template = open('mailTemplate.html', 'r')
-    content = template.read()
-    content = Template(content).safe_substitute(date_today=get_date())
-
+    mailTemplate = open('mailTemplate.html', 'r')
     weather = asyncio.run(get_weather(LOCATION))
 
+    content = mailTemplate.read()
+    content = Template(content).safe_substitute(date_today=get_date())
     content = Template(content).safe_substitute(location=LOCATION)
     content = Template(content).safe_substitute(avg=weather[2])
     content = Template(content).safe_substitute(desc=weather[1])
@@ -65,4 +83,5 @@ def main():
     send_mail(content)
 
 if __name__ == '__main__':
+    init()
     main()
