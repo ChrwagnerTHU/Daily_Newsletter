@@ -4,12 +4,45 @@
         <title>Persönlicher Newsletter</title>
     </head>
 
-    <body>
-        <h1>Guten Morgen!</h1>
-        <h2>Heute ist der $date_today</h2>
-        <h3>Wetterbericht für $location</h3>
-        In $location sind es aktuell $temp°C.<br>
-        Dabei wird es $desc sein.<br>
-        Die Durchschnittstemperatur beträgt $avg°C<br>
+    <body style="background-color:powderblue;">
+        <font face = 'Helvetica' size =+ 2>
+            <h1 align="center">Guten Morgen!</h1>
+            <h2>Heute ist der $date_today</h2>
+            <br>
+            <table cellspacing=0 cellpadding="3">
+                <tr>
+                    <td>
+                        <h4>Wetterbericht für $location:</h4>
+                    </td>
+                    <td width=0.5>
+                    </td> 
+                    <td width="50%">
+                        In $location sind es aktuell $temp°C.<br>
+                        Dabei wird es $desc sein.<br>
+                        Die Durchschnittstemperatur beträgt $avg°C<br>
+                    </td> 
+                </tr>
+                <tr>
+                    <td>
+                        <h4>Heute stehen folgende Termine an:</h4> 
+                    </td>
+                    <td width=0.5>
+                    </td>
+                    <td width="50%">
+                        $appointmentsToday
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4>Die Aktienkurse deines Depots:</h4> 
+                    </td>
+                    <td width=0.5>
+                    </td>
+                    <td width="50%">
+                        $stockDev
+                    </td>
+                </tr>
+            </table>
+        </font>
     </body>
 </html>
