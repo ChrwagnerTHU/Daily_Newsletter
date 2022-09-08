@@ -11,7 +11,9 @@ import smtplib
 
 import python_weather
 import asyncio
- 
+
+import assignmentRequest
+
 # Metod returns current date in readable format
 def get_date():
     return date.today().strftime("%d.%m.%Y")
@@ -44,10 +46,10 @@ async def get_weather(location):
             break
         return temp, desc, avg
 
-# TODO: Read Appointments from Calendar
-def get_appointments():
-    # Outlook Calendar API
-    return""
+# Outlook Calendar API
+def get_appointments(__location__):
+    # TODO: Get diffrent Calendar providers
+    return assignmentRequest.getAssignmentsOutlook(NAME, __location__)
 
 # TODO: Get Stockmarket data
 def get_stockData():
@@ -58,6 +60,7 @@ def main():
 
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+    # Define global variables
     global SENDER
     global PWD
     global MAILSERVER
@@ -66,6 +69,7 @@ def main():
     global LOCATION
     global NAME
 
+    # Read Config file
     with open (__location__ + "/config.json", "r") as f:
         data = json.load(f)
 
@@ -74,18 +78,25 @@ def main():
         MAILSERVER = data['App']['MAILSERVER']
         PORT = data['App']['PORT']
 
+        # For each user contained in config file do the folowing
         for user in data['User']:
-            RECIEVER = data['User'][user][0]
-            LOCATION = data['User'][user][1]
+            RECIEVER = data['User'][user]['RECIEVER']
+            LOCATION = data['User'][user]['LOCATION']
             NAME = user
 
-            mailTemplate = open(__location__ + '/mailTemplate.html', 'r')
-
+            # Get Weather Information
             weather = asyncio.run(get_weather(LOCATION))
             with open (__location__ + "/weatherDict.json", "r") as f:
                 data = json.load(f)
                 weatherDesc = data['Weather'][weather[1]]
 
+            # Get Appointments
+            appointments = get_appointments(__location__)
+
+            # Get Mail Template
+            mailTemplate = open(__location__ + '/mailTemplate.html', 'r')
+
+            # Set data into template
             content = mailTemplate.read()
             content = Template(content).safe_substitute(name=NAME)
             content = Template(content).safe_substitute(date_today=get_date())
@@ -93,7 +104,9 @@ def main():
             content = Template(content).safe_substitute(avg=weather[2])
             content = Template(content).safe_substitute(desc=weatherDesc)
             content = Template(content).safe_substitute(temp=weather[0])
+            content = Template(content).safe_substitute(appointmentsToday=appointments)
 
+            # Send mail
             send_mail(content)
 
 if __name__ == '__main__':
