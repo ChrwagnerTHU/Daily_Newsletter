@@ -1,4 +1,5 @@
 import json
+import os
 
 from datetime import date
 from string import Template 
@@ -11,25 +12,6 @@ import smtplib
 import python_weather
 import asyncio
  
-# Define global variables and set with config from config.json
-def init():
-    with open ("config.json", "r") as f:
-        data = json.load(f)
-        print(data)
-        global SENDER
-        global PWD
-        global MAILSERVER
-        global PORT
-        global RECIEVER
-        global LOCATION
-
-        SENDER = data['App']['SENDER']
-        PWD = data['App']['PWD']
-        MAILSERVER = data['App']['MAILSERVER']
-        PORT = data['App']['PORT']
-        RECIEVER = data['User']['RECIEVER']
-        LOCATION = data['User']['LOCATION']
-
 # Metod returns current date in readable format
 def get_date():
     return date.today().strftime("%d.%m.%Y")
@@ -50,6 +32,7 @@ def send_mail(content):
     del msg
     s.quit()
 
+# Method get current weather forecast for set location
 async def get_weather(location):
     async with python_weather.Client() as client:
         weather = await client.get(location)
@@ -72,18 +55,46 @@ def get_stockData():
 
 # Main method
 def main():
-    mailTemplate = open('mailTemplate.html', 'r')
-    weather = asyncio.run(get_weather(LOCATION))
 
-    content = mailTemplate.read()
-    content = Template(content).safe_substitute(date_today=get_date())
-    content = Template(content).safe_substitute(location=LOCATION)
-    content = Template(content).safe_substitute(avg=weather[2])
-    content = Template(content).safe_substitute(desc=weather[1])
-    content = Template(content).safe_substitute(temp=weather[0])
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-    send_mail(content)
+    global SENDER
+    global PWD
+    global MAILSERVER
+    global PORT
+    global RECIEVER
+    global LOCATION
+    global NAME
+
+    with open (__location__ + "/config.json", "r") as f:
+        data = json.load(f)
+
+        SENDER = data['App']['SENDER']
+        PWD = data['App']['PWD']
+        MAILSERVER = data['App']['MAILSERVER']
+        PORT = data['App']['PORT']
+
+        for user in data['User']:
+            RECIEVER = data['User'][user][0]
+            LOCATION = data['User'][user][1]
+            NAME = user
+
+            mailTemplate = open(__location__ + '/mailTemplate.html', 'r')
+
+            weather = asyncio.run(get_weather(LOCATION))
+            with open (__location__ + "/weatherDict.json", "r") as f:
+                data = json.load(f)
+                weatherDesc = data['Weather'][weather[1]]
+
+            content = mailTemplate.read()
+            content = Template(content).safe_substitute(name=NAME)
+            content = Template(content).safe_substitute(date_today=get_date())
+            content = Template(content).safe_substitute(location=LOCATION)
+            content = Template(content).safe_substitute(avg=weather[2])
+            content = Template(content).safe_substitute(desc=weatherDesc)
+            content = Template(content).safe_substitute(temp=weather[0])
+
+            send_mail(content)
 
 if __name__ == '__main__':
-    init()
     main()
