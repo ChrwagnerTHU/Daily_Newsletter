@@ -1,4 +1,5 @@
 import json
+from logging import exception
 import os
 
 from datetime import date
@@ -51,16 +52,16 @@ def get_appointments(__location__):
     # TODO: Get diffrent Calendar providers
     domain = CALENDAR[CALENDAR.index('@') + 1 : ]
     if not domain == "":
-        if domain.find("outlook") == -1 or domain.find("hotmail") == -1:
+        if "outlook" in domain or "hotmail" in domain:
             return assignmentRequest.getAssignmentsOutlook(NAME, __location__)
-        elif domain.find("gmx") == -1:
+        elif "gmx" in domain:
             return "Kalender für @gmx ist noch nicht implementiert"
-        elif domain.find("web") == -1:
+        elif "web" in domain:
             return "Kalender für @web ist noch nicht implementiert"
-        elif domain.find("gmail") == -1:
+        elif "gmail" in domain:
             return "Kalender für @gmail ist noch nicht implementiert"
         else:
-            return "Kalender ist für diese Domain noch nicht implementiert"
+            return "Kalender ist für die Domain " + domain + " noch nicht implementiert"
     else:
         return ""
 
@@ -84,7 +85,7 @@ def main():
     global CALENDAR
 
     # Read Config file
-    with open (__location__ + "/config.json", "r") as f:
+    with open (__location__ + "/ressource/config.json", "r") as f:
         data = json.load(f)
 
         SENDER = data['App']['SENDER']
@@ -92,41 +93,68 @@ def main():
         MAILSERVER = data['App']['MAILSERVER']
         PORT = data['App']['PORT']
 
+        log = ""
+        newLog = ""
+        
         # For each user contained in config file do the folowing
         for user in data['User']:
-            RECIEVER = data['User'][user]['RECIEVER']
-            LOCATION = data['User'][user]['LOCATION']
-            CALENDAR = data['User'][user]['CALENDAR']
-            NAME = user
+            # Try sending newsletter
+            count = 0
+            try:
+                # Try sending max five times
+                while count <= 5:
+                # Read log file
+                    with open (__location__ + "/ressource/log.txt") as l:
+                        log = l.read()
+                        # Check if todays newsletter has already been sent
+                        if not (user + " -- " + get_date()) in log or not (user + " -- " + get_date()) in newLog:
+                            RECIEVER = data['User'][user]['RECIEVER']
+                            LOCATION = data['User'][user]['LOCATION']
+                            CALENDAR = data['User'][user]['CALENDAR']
+                            NAME = user
 
-            # Get Weather Information
-            weather = asyncio.run(get_weather(LOCATION))
-            with open (__location__ + "/weatherDict.json", "r") as f:
-                data = json.load(f)
-                weatherDesc = data['Weather'][weather[1]]
+                            # Get Weather Information
+                            weather = asyncio.run(get_weather(LOCATION))
+                            with open (__location__ + "/ressource/weatherDict.json", "r") as w:
+                                data = json.load(w)
+                                weatherDesc = data['Weather'][weather[1]]
+                                w.close()
 
-            # Get Appointments
-            appointments = get_appointments(__location__)
+                            # Get Appointments
+                            appointments = get_appointments(__location__)
 
-            # Get stock data
-            stock = get_stockData()
+                            # Get stock data
+                            stock = get_stockData()
 
-            # Get Mail Template
-            mailTemplate = open(__location__ + '/mailTemplate.html', 'r')
+                            # Get Mail Template
+                            mailTemplate = open(__location__ + '/ressource/mailTemplate.html', 'r')
 
-            # Set data into template
-            content = mailTemplate.read()
-            content = Template(content).safe_substitute(name=NAME)
-            content = Template(content).safe_substitute(date_today=get_date())
-            content = Template(content).safe_substitute(location=LOCATION)
-            content = Template(content).safe_substitute(avg=weather[2])
-            content = Template(content).safe_substitute(desc=weatherDesc)
-            content = Template(content).safe_substitute(temp=weather[0])
-            content = Template(content).safe_substitute(appointmentsToday=appointments)
-            content = Template(content).safe_substitute(stockDev=stock)
+                            # Set data into template
+                            content = mailTemplate.read()
+                            content = Template(content).safe_substitute(name=NAME)
+                            content = Template(content).safe_substitute(date_today=get_date())
+                            content = Template(content).safe_substitute(location=LOCATION)
+                            content = Template(content).safe_substitute(avg=weather[2])
+                            content = Template(content).safe_substitute(desc=weatherDesc)
+                            content = Template(content).safe_substitute(temp=weather[0])
+                            content = Template(content).safe_substitute(appointmentsToday=appointments)
+                            content = Template(content).safe_substitute(stockDev=stock)
 
-            # Send mail
-            send_mail(content)
+                            # Send mail
+                            send_mail(content)
+                            newLog = user + " -- " + get_date() + "\n"
+                            break
+                        l.close()
+            except:
+                pass
+        # Update log file
+        with open (__location__ + "/ressource/log.txt", "a") as l:
+            l.write(log + newLog)
+            l.close()
+        f.close()
+
+
+
 
 if __name__ == '__main__':
     main()

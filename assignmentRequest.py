@@ -23,9 +23,7 @@ def getAssignmentsOutlook(USER, __location__):
     protocol = MSGraphProtocol(defualt_resource=CALENDAR)
     scopes = ['Calendars.Read']
     account= Account(credentials, protocol=protocol)
-
-    print(__location__ + "/o365_token.txt")
-
+    
     # Check if token has already been created
     if not os.path.exists(__location__ + "/o365_token.txt"):
         if account.authenticate(scopes=scopes):
