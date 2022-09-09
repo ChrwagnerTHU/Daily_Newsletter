@@ -3,13 +3,13 @@ import json
 from sqlite3 import SQLITE_CREATE_INDEX
 from O365 import Account, MSGraphProtocol
 import datetime as dt
+import os.path
 
 def getAssignmentsOutlook(USER, __location__):
 
     global CLIENT_ID
     global SECRET_ID
     global CALENDAR
-    global CAL_DONE
 
     with open (__location__ + "/config.json", "r") as f:
         data = json.load(f)
@@ -17,7 +17,6 @@ def getAssignmentsOutlook(USER, __location__):
         CLIENT_ID = data['User'][USER]['CLIENT_ID']
         SECRET_ID = data['User'][USER]['SECRET_ID']
         CALENDAR = data['User'][USER]['CALENDAR']
-        CAL_DONE = data['User'][USER]['CAL_DONE']
 
     credentials = (CLIENT_ID, SECRET_ID)
 
@@ -25,9 +24,12 @@ def getAssignmentsOutlook(USER, __location__):
     scopes = ['Calendars.Read']
     account= Account(credentials, protocol=protocol)
 
-    # TODO: Dynamic test if account has still to be authenticated
-    # if account.authenticate(scopes=scopes):
-    #     print('Authenticated!')
+    print(__location__ + "/o365_token.txt")
+
+    # Check if token has already been created
+    if not os.path.exists(__location__ + "/o365_token.txt"):
+        if account.authenticate(scopes=scopes):
+            print('Authenticated!')
 
     schedule = account.schedule()
     calendar = schedule.get_default_calendar()
@@ -52,8 +54,10 @@ def getAssignmentsOutlook(USER, __location__):
     else:
         return "Heute sind keine Einträge im Kalender"
 
+# TODO: Implement Method
 def getAssignmentsGmail(USER, __location__):
     return "Uminplemented"
 
+# TODO: Implement Method
 def getAssignmentsGmx(USER, __location__):
     return "Uminplemented"
