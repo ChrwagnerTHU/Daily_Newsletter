@@ -11,7 +11,7 @@ def getAssignmentsOutlook(USER, __location__):
     global SECRET_ID
     global CALENDAR
 
-    with open (__location__ + "/config.json", "r") as f:
+    with open (__location__ + "/ressource/config.json", "r") as f:
         data = json.load(f)
 
         CLIENT_ID = data['User'][USER]['CLIENT_ID']
