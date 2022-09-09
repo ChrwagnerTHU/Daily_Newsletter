@@ -49,7 +49,20 @@ async def get_weather(location):
 # Outlook Calendar API
 def get_appointments(__location__):
     # TODO: Get diffrent Calendar providers
-    return assignmentRequest.getAssignmentsOutlook(NAME, __location__)
+    domain = CALENDAR[CALENDAR.index('@') + 1 : ]
+    if not domain == "":
+        if domain.find("outlook") == -1 or domain.find("hotmail") == -1:
+            return assignmentRequest.getAssignmentsOutlook(NAME, __location__)
+        elif domain.find("gmx") == -1:
+            return "Kalender für @gmx ist noch nicht implementiert"
+        elif domain.find("web") == -1:
+            return "Kalender für @web ist noch nicht implementiert"
+        elif domain.find("gmail") == -1:
+            return "Kalender für @gmail ist noch nicht implementiert"
+        else:
+            return "Kalender ist für diese Domain noch nicht implementiert"
+    else:
+        return ""
 
 # TODO: Get Stockmarket data
 def get_stockData():
@@ -68,6 +81,7 @@ def main():
     global RECIEVER
     global LOCATION
     global NAME
+    global CALENDAR
 
     # Read Config file
     with open (__location__ + "/config.json", "r") as f:
@@ -82,6 +96,7 @@ def main():
         for user in data['User']:
             RECIEVER = data['User'][user]['RECIEVER']
             LOCATION = data['User'][user]['LOCATION']
+            CALENDAR = data['User'][user]['CALENDAR']
             NAME = user
 
             # Get Weather Information
@@ -92,6 +107,9 @@ def main():
 
             # Get Appointments
             appointments = get_appointments(__location__)
+
+            # Get stock data
+            stock = get_stockData()
 
             # Get Mail Template
             mailTemplate = open(__location__ + '/mailTemplate.html', 'r')
@@ -105,6 +123,7 @@ def main():
             content = Template(content).safe_substitute(desc=weatherDesc)
             content = Template(content).safe_substitute(temp=weather[0])
             content = Template(content).safe_substitute(appointmentsToday=appointments)
+            content = Template(content).safe_substitute(stockDev=stock)
 
             # Send mail
             send_mail(content)
