@@ -100,9 +100,10 @@ def main():
         for user in data['User']:
             # Try sending newsletter
             count = 0
-            try:
-                # Try sending max five times
-                while count <= 5:
+            sent = False
+            # Try sending max five times
+            while count <= 5 or not sent:
+                try:
                 # Read log file
                     with open (__location__ + "/ressource/log.txt") as l:
                         log = l.read()
@@ -143,17 +144,19 @@ def main():
                             # Send mail
                             send_mail(content)
                             newLog = user + " -- " + get_date() + "\n"
+                            sent = True
                             break
+                        else:
+                            sent = True
                         l.close()
-            except:
-                pass
+                except:
+                    count = count + 1
+                    pass
         # Update log file
         with open (__location__ + "/ressource/log.txt", "a") as l:
             l.write(log + newLog)
             l.close()
         f.close()
-
-
 
 
 if __name__ == '__main__':
