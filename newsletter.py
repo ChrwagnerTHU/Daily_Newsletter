@@ -43,7 +43,7 @@ async def get_weather(location):
         desc = weather.current.description
         avg = ""
         for forecasts in weather.forecasts:
-            avg = forecasts.average_temperature
+            avg = forecasts.temperature
             break
         return temp, desc, avg
 
