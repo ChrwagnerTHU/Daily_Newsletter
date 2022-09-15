@@ -14,11 +14,6 @@ import asyncio
 
 import assignmentRequest
 
-class asf:
-    X
-
-
-
 # Metod returns current date in readable format
 def get_date():
     return date.today().strftime("%d.%m.%Y")
