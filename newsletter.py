@@ -13,6 +13,7 @@ import python_weather
 import asyncio
 
 import assignmentRequest
+import wikiRand
 
 # Metod returns current date in readable format
 def get_date():
@@ -123,6 +124,9 @@ def main():
                             # Get stock data
                             stock = get_stockData()
 
+                            # Get random Wikipedia Article
+                            wiki = wikiRand.main()
+
                             # Get Mail Template
                             mailTemplate = open(__location__ + '/ressource/mailTemplate.html', 'r')
 
@@ -165,6 +169,15 @@ def main():
                                     content = Template(content).safe_substitute(stockTemplate=stockSnipped)
                                 else:
                                     content = Template(content).safe_substitute(stockTemplate="")
+
+                                # Set Wiki article into Template
+                                if wiki:
+                                    wikiSnipped = snipped['WIKI']
+                                    wikiSnipped = Template(wikiSnipped).safe_substitute(wikiUrl=wiki['Link'])
+                                    wikiSnipped = Template(wikiSnipped).safe_substitute(wikiText=wiki['Header'])
+                                    content = Template(content).safe_substitute(wikiTemplate=wikiSnipped)
+                                else:
+                                    content = Template(content).safe_substitute(wikiTemplate="")
                             h.close()
                             
                             # Send mail
