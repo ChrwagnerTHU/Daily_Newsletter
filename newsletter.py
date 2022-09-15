@@ -2,6 +2,7 @@ import json
 import os
 
 from datetime import date
+from re import X
 from string import Template 
 
 from email.mime.multipart import MIMEMultipart
@@ -12,6 +13,11 @@ import python_weather
 import asyncio
 
 import assignmentRequest
+
+class asf:
+    X
+
+
 
 # Metod returns current date in readable format
 def get_date():
@@ -125,7 +131,7 @@ def main():
                             # Get Mail Template
                             mailTemplate = open(__location__ + '/ressource/mailTemplate.html', 'r')
 
-                            with open (__location__ + "ressource/htmlDict.json", "r") as h:
+                            with open (__location__ + "/ressource/htmlDict.json", "r") as h:
 
                                 snipped = json.load(h)
 
@@ -146,16 +152,24 @@ def main():
                                     weatherSnipped = Template(weatherSnipped).safe_substitute(desc=weatherDesc)
                                     weatherSnipped = Template(weatherSnipped).safe_substitute(temp=weather[0])
                                     content = Template(content).safe_substitute(weatherTemplate=weatherSnipped)
+                                else:
+                                    content = Template(content).safe_substitute(weatherTemplate="")
 
+                                # Set Calendar data into Template
                                 if appointments:
                                     calendarSnipped = snipped['CALENDAR']
                                     calendarSnipped = Template(calendarSnipped).safe_substitute(appointmentsToday=appointments)
                                     content = Template(content).safe_substitute(appointmentsTemplate=calendarSnipped)
+                                else:
+                                    content = Template(content).safe_substitute(appointmentsTemplate="")
 
+                                # Set Stock data into Template
                                 if stock:
                                     stockSnipped = snipped['CALENDAR']
                                     stockSnipped = Template(stockSnipped).safe_substitute(stockDev=stock)
                                     content = Template(content).safe_substitute(stockTemplate=stockSnipped)
+                                else:
+                                    content = Template(content).safe_substitute(stockTemplate="")
                             h.close()
                             
                             # Send mail
@@ -172,10 +186,9 @@ def main():
                     pass
         # Update log file
         with open (__location__ + "/ressource/log.txt", "a") as l:
-            l.write(log + newLog)
+            l.write(log + "\n" + newLog)
             l.close()
         f.close()
-
 
 if __name__ == '__main__':
     main()
