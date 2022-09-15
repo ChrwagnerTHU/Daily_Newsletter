@@ -1,10 +1,8 @@
 import json
-from logging import exception
 import os
 
 from datetime import date
 from string import Template 
-from bs4 import BeautifulSoup
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -107,8 +105,9 @@ def main():
                 # Read log file
                     with open (__location__ + "/ressource/log.txt") as l:
                         log = l.read()
+                        logUser = user + " -- " + get_date()
                         # Check if todays newsletter has already been sent
-                        if not (user + " -- " + get_date()) in log or not (user + " -- " + get_date()) in newLog:
+                        if not logUser in log:
                             RECIEVER = data['User'][user]['RECIEVER']
                             LOCATION = data['User'][user]['LOCATION']
                             CALENDAR = data['User'][user]['CALENDAR']
@@ -116,10 +115,6 @@ def main():
 
                             # Get Weather Information
                             weather = asyncio.run(get_weather(LOCATION))
-                            with open (__location__ + "/ressource/weatherDict.json", "r") as w:
-                                data = json.load(w)
-                                weatherDesc = data['Weather'][weather[1]]
-                                w.close()
 
                             # Get Appointments
                             appointments = get_appointments(__location__)
@@ -130,26 +125,49 @@ def main():
                             # Get Mail Template
                             mailTemplate = open(__location__ + '/ressource/mailTemplate.html', 'r')
 
-                            # Set data into template
-                            content = mailTemplate.read()
-                            content = Template(content).safe_substitute(name=NAME)
-                            content = Template(content).safe_substitute(date_today=get_date())
-                            content = Template(content).safe_substitute(location=LOCATION)
-                            content = Template(content).safe_substitute(avg=weather[2])
-                            content = Template(content).safe_substitute(desc=weatherDesc)
-                            content = Template(content).safe_substitute(temp=weather[0])
-                            content = Template(content).safe_substitute(appointmentsToday=appointments)
-                            content = Template(content).safe_substitute(stockDev=stock)
+                            with open (__location__ + "ressource/htmlDict.json", "r") as h:
 
+                                snipped = json.load(h)
+
+                                # Set general data into template
+                                content = mailTemplate.read()
+                                content = Template(content).safe_substitute(name=NAME)
+                                content = Template(content).safe_substitute(date_today=get_date())
+
+                                # Set Weather data into Template
+                                if weather:
+                                    with open (__location__ + "/ressource/weatherDict.json", "r") as w:
+                                        data = json.load(w)
+                                        weatherDesc = data['Weather'][weather[1]]
+                                        w.close()
+                                    weatherSnipped = snipped['WEATHER']
+                                    weatherSnipped = Template(weatherSnipped).safe_substitute(location=LOCATION)
+                                    weatherSnipped = Template(weatherSnipped).safe_substitute(avg=weather[2])
+                                    weatherSnipped = Template(weatherSnipped).safe_substitute(desc=weatherDesc)
+                                    weatherSnipped = Template(weatherSnipped).safe_substitute(temp=weather[0])
+                                    content = Template(content).safe_substitute(weatherTemplate=weatherSnipped)
+
+                                if appointments:
+                                    calendarSnipped = snipped['CALENDAR']
+                                    calendarSnipped = Template(calendarSnipped).safe_substitute(appointmentsToday=appointments)
+                                    content = Template(content).safe_substitute(appointmentsTemplate=calendarSnipped)
+
+                                if stock:
+                                    stockSnipped = snipped['CALENDAR']
+                                    stockSnipped = Template(stockSnipped).safe_substitute(stockDev=stock)
+                                    content = Template(content).safe_substitute(stockTemplate=stockSnipped)
+                            h.close()
+                            
                             # Send mail
                             send_mail(content)
-                            newLog = user + " -- " + get_date() + "\n"
+                            newLog = logUser + "\n"
                             sent = True
                             break
                         else:
                             sent = True
                         l.close()
-                except:
+                except Exception as e:
+                    print(e)
                     count = count + 1
                     pass
         # Update log file

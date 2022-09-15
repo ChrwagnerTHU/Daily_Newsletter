@@ -11,36 +11,13 @@
             <br>
             <table cellspacing=0 cellpadding="3">
                 <tr>
-                    <td>
-                        <h4>Wetterbericht für $location:</h4>
-                    </td>
-                    <td width=0.5>
-                    </td> 
-                    <td width="50%">
-                        In $location sind es aktuell $temp°C.<br>
-                        Dabei wird es $desc sein.<br>
-                        Die Durchschnittstemperatur beträgt $avg°C<br>
-                    </td> 
+                    $weatherTemplate
                 </tr>
                 <tr>
-                    <td>
-                        <h4>Heute stehen folgende Termine an:</h4> 
-                    </td>
-                    <td width=0.5>
-                    </td>
-                    <td width="50%">
-                        $appointmentsToday
-                    </td>
+                    $appointmentsTemplate
                 </tr>
                 <tr>
-                    <td>
-                        <h4>Die Aktienkurse deines Depots:</h4> 
-                    </td>
-                    <td width=0.5>
-                    </td>
-                    <td width="50%">
-                        $stockDev
-                    </td>
+                    $stockTemplate
                 </tr>
             </table>
         </font>
