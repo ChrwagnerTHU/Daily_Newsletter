@@ -1,5 +1,8 @@
 {
     "Weather": {
-        "Partly cloudy": "leicht bewölkt"
+        "Partly cloudy": "leicht bewölkt",
+        "Sunny": "sonnig",
+        "Cloudy": "wolkig",
+        "Rainy": "regnerisch"
     }
 }
