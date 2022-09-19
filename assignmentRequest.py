@@ -1,9 +1,11 @@
 from calendar import Calendar
 import json
 from sqlite3 import SQLITE_CREATE_INDEX
-from O365 import Account, MSGraphProtocol
+from O365 import Account, MSGraphProtocol, FileSystemTokenBackend
 import datetime as dt
+from calendar import monthrange
 import os.path
+
 
 def getAssignmentsOutlook(USER, __location__):
 
@@ -22,12 +24,12 @@ def getAssignmentsOutlook(USER, __location__):
 
     protocol = MSGraphProtocol(defualt_resource=CALENDAR)
     scopes = ['Calendars.Read']
-    account= Account(credentials, protocol=protocol)
+    token_backend = FileSystemTokenBackend(token_path=__location__, token_filename='o365_token.txt')
+    account = Account(credentials, token_backend=token_backend, protocol=protocol)
     
     # Check if token has already been created
-    if not os.path.exists(__location__ + "/o365_token.txt"):
-        if account.authenticate(scopes=scopes):
-            print('Authenticated!')
+    if not account.is_authenticated:
+        account.authenticate(scopes=scopes)
 
     schedule = account.schedule()
     calendar = schedule.get_default_calendar()
@@ -36,19 +38,28 @@ def getAssignmentsOutlook(USER, __location__):
     currentMonth = dt.datetime.now().month
     currentYear = dt.datetime.now().year
 
-    # Query to get Entries for current day
-    q = calendar.new_query('start').greater_equal(dt.datetime(currentYear, currentMonth, currentDay, 0, 1))
-    q.chain('and').on_attribute('end').less_equal(dt.datetime(currentYear, currentMonth, currentDay, 23, 59))
+    #Check if currentDate + 1 is in new month and create query
+    if currentMonth == 12 and currentDay == 31:
+        q = calendar.new_query('start').greater_equal(dt.date(currentYear, currentMonth, currentDay))
+        q.chain('and').on_attribute('start').less_equal(dt.datetime(currentYear + 1, 1, 1))
+    elif currentDay + 1 > monthrange(currentYear, currentMonth)[1]:
+        q = calendar.new_query('start').greater_equal(dt.date(currentYear, currentMonth, currentDay))
+        q.chain('and').on_attribute('start').less_equal(dt.datetime(currentYear,  currentMonth + 1, 1))
+    else:
+        q = calendar.new_query('start').greater_equal(dt.date(currentYear, currentMonth, currentDay))
+        q.chain('and').on_attribute('start').less_equal(dt.datetime(currentYear, currentMonth, currentDay + 1))
 
+    # Query to get Entries for current day
     events = calendar.get_events(query=q, include_recurring=False) 
 
+    result = ""
     for event in events:
-        text = event.subject + " von: " + event.start.strftime("%H.%M") + " Uhr - bis: " + event.end.strftime("%H.%M") + " Uhr<br>"
+        result = event.subject + " von: " + event.start.strftime("%H.%M") + " Uhr - bis: " + event.end.strftime("%H.%M") + " Uhr<br>"
 
-    if 'text' in locals():
-        size = len(text)
-        text = text[:size - 4]
-        return text
+    if result:
+        size = len(result)
+        result = result[:size - 4]
+        return result
     else:
         return "Heute sind keine Einträge im Kalender"
 
@@ -59,3 +70,7 @@ def getAssignmentsGmail(USER, __location__):
 # TODO: Implement Method
 def getAssignmentsGmx(USER, __location__):
     return "Uminplemented"
+
+if __name__ == '__main__':
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    getAssignmentsOutlook("Christopher", __location__)

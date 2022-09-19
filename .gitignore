@@ -2,3 +2,4 @@ o365_token.txt
 __pycache__/
 ressource/config.json
 ressource/log.txt
+dev/

@@ -14,6 +14,7 @@ import asyncio
 
 import assignmentRequest
 import wikiRand
+import eventsToday
 
 # Metod returns current date in readable format
 def get_date():
@@ -55,13 +56,13 @@ def get_appointments(__location__):
         if "outlook" in domain or "hotmail" in domain:
             return assignmentRequest.getAssignmentsOutlook(NAME, __location__)
         elif "gmx" in domain:
-            return "Kalender für @gmx ist noch nicht implementiert"
+            return ""
         elif "web" in domain:
-            return "Kalender für @web ist noch nicht implementiert"
+            return ""
         elif "gmail" in domain:
-            return "Kalender für @gmail ist noch nicht implementiert"
+            return ""
         else:
-            return "Kalender ist für die Domain " + domain + " noch nicht implementiert"
+            return ""
     else:
         return ""
 
@@ -102,7 +103,7 @@ def main():
             count = 0
             sent = False
             # Try sending max five times
-            while count <= 5 or not sent:
+            while count <= 5 and not sent:
                 try:
                 # Read log file
                     with open (__location__ + "/ressource/log.txt") as l:
@@ -120,6 +121,9 @@ def main():
 
                             # Get Appointments
                             appointments = get_appointments(__location__)
+                            # appointments = ""
+
+                            events = eventsToday.getEvents(LOCATION)
 
                             # Get stock data
                             stock = get_stockData()
@@ -144,6 +148,8 @@ def main():
                                     with open (__location__ + "/ressource/weatherDict.json", "r") as w:
                                         data = json.load(w)
                                         weatherDesc = data['Weather'][weather[1]]
+                                        if not weatherDesc:
+                                            weatherDesc = weather[1]
                                         w.close()
                                     weatherSnipped = snipped['WEATHER']
                                     weatherSnipped = Template(weatherSnipped).safe_substitute(location=LOCATION)
@@ -178,6 +184,15 @@ def main():
                                     content = Template(content).safe_substitute(wikiTemplate=wikiSnipped)
                                 else:
                                     content = Template(content).safe_substitute(wikiTemplate="")
+
+                                if events:
+                                    eventsSnipped = snipped['EVENTS']
+                                    eventsSnipped = Template(eventsSnipped).safe_substitute(eventsToday=events)
+                                    eventsSnipped = Template(eventsSnipped).safe_substitute(location=LOCATION)
+                                    content = Template(content).safe_substitute(eventsTemplate=eventsSnipped)
+                                else:
+                                    content = Template(content).safe_substitute(eventsTemplate="")
+
                             h.close()
                             
                             # Send mail
@@ -189,12 +204,11 @@ def main():
                             sent = True
                         l.close()
                 except Exception as e:
-                    print(e)
+                    print(str(e))
                     count = count + 1
-                    pass
         # Update log file
         with open (__location__ + "/ressource/log.txt", "a") as l:
-            l.write(log + "\n" + newLog)
+            l.write(newLog)
             l.close()
         f.close()
 
