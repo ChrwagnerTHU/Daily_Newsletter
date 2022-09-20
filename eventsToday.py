@@ -21,6 +21,11 @@ def getEvents(location):
     divTag = soup.find_all("div", {"class": "media-body"})
 
     result = ""
+    
+    cName = ""
+    cStart = ""
+    cEnd = ""
+    cLoc = ""
 
     for tag in divTag:
         name = tag.find_all("span", {"class": "summary"})
