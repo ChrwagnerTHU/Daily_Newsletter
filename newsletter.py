@@ -122,8 +122,8 @@ def main():
                             weather = asyncio.run(get_weather(LOCATION))
 
                             # Get Appointments
-                            appointments = get_appointments(__location__)
-                            # appointments = ""
+                            #appointments = get_appointments(__location__)
+                            appointments = ""
 
                             events = eventsToday.getEvents(LOCATION)
 
