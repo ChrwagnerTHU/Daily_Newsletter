@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import json, requests
 from bs4 import BeautifulSoup
 from string import Template 
@@ -21,7 +23,7 @@ def getEvents(location):
     divTag = soup.find_all("div", {"class": "media-body"})
 
     result = ""
-    
+
     cName = ""
     cStart = ""
     cEnd = ""

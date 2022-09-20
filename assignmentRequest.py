@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 from calendar import Calendar
 import json
 from sqlite3 import SQLITE_CREATE_INDEX
