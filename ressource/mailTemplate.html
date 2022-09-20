@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Persönlicher Newsletter</title>
+    </head>
+
+    <body style="background-color:powderblue;">
+        <font face = 'Helvetica' size =+ 2>
+            <h1 align="center">Guten Morgen $name!</h1>
+            <h2>Heute ist der $date_today</h2>
+            <br>
+            <table cellspacing=0 cellpadding="3">
+                <tr>
+                    $weatherTemplate
+                </tr>
+                <tr>
+                    $appointmentsTemplate
+                </tr>
+                <tr>
+                    $stockTemplate
+                </tr>
+                <tr>
+                    $eventsTemplate
+                </tr>
+                <tr>
+                    $wikiTemplate
+                </tr>
+            </table>
+        </font>
+    </body>
+</html>
