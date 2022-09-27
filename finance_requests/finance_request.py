@@ -46,7 +46,7 @@ class requester:
 
         data += self.getStocksDaily()
         data += self.getEtfsDaily()
-        #data *= self.getCryptoDaily()
+        data += self.getCryptosDaily()
 
         return data
 
@@ -76,6 +76,19 @@ class requester:
         
         return etfs_list
 
+    def getCryptosDaily(self):
+        cryptos_list = list()
+
+        # get data for each symbol
+        for symbol in self.cryptos:
+            crypto_with_symbol = dict()
+            crypto_with_symbol[symbol] = self.getCryptoDaily(symbol)
+            cryptos_list.append(crypto_with_symbol)
+            # request only 5 times in a minute
+            time.sleep(12)
+        
+        return cryptos_list
+
     def getStockOrEtfDaily(self, symbol):
         function_name = "function=TIME_SERIES_DAILY"
         today = datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time())
@@ -86,13 +99,32 @@ class requester:
         data = dict(r.json()["Time Series (Daily)"])
         
         # remove unnessesary data
-        # 2do notice weekends 
         data_reduced = dict()
         for stock_date, stock_info in data.items():
             date = datetime.datetime.strptime(stock_date, '%Y-%m-%d')
             delta = today - date
 
-            if delta.days <= 7:
+            if delta.days < 7:
                 data_reduced[stock_date] = stock_info
+
+        return data_reduced
+
+    def getCryptoDaily(self, symbol):
+        function_name = "function=DIGITAL_CURRENCY_DAILY"
+        today = datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time())
+
+        # get data
+        url = self.base_url + function_name + '&symbol=' + symbol + '&market=USD' + '&apikey=' + self.api_key
+        r = requests.get(url)
+        data = dict(r.json()["Time Series (Digital Currency Daily)"])
+        
+        # remove unnessesary data
+        data_reduced = dict()
+        for crypto_date, crypto_info in data.items():
+            date = datetime.datetime.strptime(crypto_date, '%Y-%m-%d')
+            delta = today - date
+
+            if delta.days < 7:
+                data_reduced[crypto_date] = crypto_info
 
         return data_reduced
