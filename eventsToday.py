@@ -34,7 +34,7 @@ def getEvents(location):
 
         # Check if event is a sponsored event
         if feature:
-            break
+            continue
 
         name = tag.find_all("span", {"class": "summary"})
         dtStart = tag.find_all("span", {"class": "dtstart"})
