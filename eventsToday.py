@@ -30,6 +30,12 @@ def getEvents(location):
     cLoc = ""
 
     for tag in divTag:
+        feature = tag.find_all("div", {"class": "featured"})
+
+        # Check if event is a sponsored event
+        if feature:
+            continue
+
         name = tag.find_all("span", {"class": "summary"})
         dtStart = tag.find_all("span", {"class": "dtstart"})
         dtEnd = tag.find_all("span", {"class": "dtend"})
