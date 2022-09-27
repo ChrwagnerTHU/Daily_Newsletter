@@ -25,7 +25,7 @@ def getAssignmentsOutlook(USER, __location__):
     credentials = (CLIENT_ID, SECRET_ID)
 
     protocol = MSGraphProtocol(defualt_resource=CALENDAR)
-    scopes = ['Calendars.Read']
+    scopes = ['User.Read', 'User.ReadBasic.All', 'Calendars.Read']
     token_backend = FileSystemTokenBackend(token_path=__location__, token_filename='o365_token.txt')
     account = Account(credentials, token_backend=token_backend, protocol=protocol)
     
