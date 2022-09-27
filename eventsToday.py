@@ -36,7 +36,6 @@ def getEvents(location):
         if feature:
             break
 
-
         name = tag.find_all("span", {"class": "summary"})
         dtStart = tag.find_all("span", {"class": "dtstart"})
         dtEnd = tag.find_all("span", {"class": "dtend"})
