@@ -122,7 +122,8 @@ class requester:
             delta = today - date
 
             if delta.days < 7:
-                data_reduced[stock_date] = stock_info
+                price = float(stock_info["4. close"]) * self.usdEuroExchangeRate
+                data_reduced[stock_date] = price
 
         return data_reduced
 
@@ -142,6 +143,7 @@ class requester:
             delta = today - date
 
             if delta.days < 7:
-                data_reduced[crypto_date] = crypto_info
+                price = float(crypto_info["4. close"]) * self.usdEuroExchangeRate
+                data_reduced[crypto_date] = price
 
         return data_reduced
