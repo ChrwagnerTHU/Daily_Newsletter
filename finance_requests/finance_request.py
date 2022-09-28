@@ -41,15 +41,16 @@ class requester:
                 self.cryptos.add(crypto['symbol'])
         
         self.usdEuroExchangeRate = self.getExchangeRate('USD', 'EUR')
+        time.sleep(12)
 
     """ Get stock, etf and crypto data
     (the last 7 days (stock and etf without the weekend)) """
     def getDataDaily(self):
-        data = list()
+        data = dict()
 
-        data += self.getStocksDaily()
-        data += self.getEtfsDaily()
-        data += self.getCryptosDaily()
+        data["stocks"] = self.getStocksDaily()
+        data["etfs"] = self.getEtfsDaily()
+        data["cryptos"] = self.getCryptosDaily()
 
         return data
 
@@ -143,7 +144,7 @@ class requester:
             delta = today - date
 
             if delta.days < 7:
-                price = float(crypto_info["4. close"]) * self.usdEuroExchangeRate
+                price = float(crypto_info["4a. close (USD)"]) * self.usdEuroExchangeRate
                 data_reduced[crypto_date] = price
 
         return data_reduced
