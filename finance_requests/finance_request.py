@@ -13,6 +13,7 @@ import time
 
 class requester:
     base_url = "https://www.alphavantage.co/query?"
+    usdEuroExchangeRate = 1
 
     """ Constructor """
     def __init__(self, api_key, config_path: str):
@@ -38,6 +39,8 @@ class requester:
         if config['info']['cryptos']:
             for crypto in config['cryptos']:
                 self.cryptos.add(crypto['symbol'])
+        
+        self.usdEuroExchangeRate = self.getExchangeRate('USD', 'EUR')
 
     """ Get stock, etf and crypto data
     (the last 7 days (stock and etf without the weekend)) """
@@ -49,6 +52,20 @@ class requester:
         data += self.getCryptosDaily()
 
         return data
+
+    def getExchangeRate(self, fromSymbol, toSymbol):
+        function_name = "function=FX_DAILY"
+
+        # get data
+        url = self.base_url + function_name + '&from_symbol=' + fromSymbol + '&to_symbol=' + toSymbol + '&apikey=' + self.api_key
+        r = requests.get(url)
+        data = dict(r.json()["Time Series FX (Daily)"])
+
+        # request only 5 times in a minute
+        time.sleep(12)
+
+        # return only 'close' of today
+        return float(data[datetime.datetime.today().strftime('%Y-%m-%d')]["4. close"])
 
     def getStocksDaily(self):
         stocks_list = list()
