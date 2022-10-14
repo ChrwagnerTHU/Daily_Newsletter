@@ -80,7 +80,7 @@ def get_stockData():
 # Main method
 def main():
 
-    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    _ose(_location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     # Define global variables
     global SENDER
@@ -127,7 +127,7 @@ def main():
                             weather = asyncio.run(get_weather(LOCATION))
 
                             # Get Appointments
-                            #appointments = get_appointments(__location__)
+                            # appointments = get_appointments(__location__)
                             appointments = ""
 
                             events = eventsToday.getEvents(LOCATION)
@@ -217,7 +217,7 @@ def main():
         with open (__location__ + "/ressource/log.txt", "a") as l:
             l.write(newLog)
             l.close()
-        f.close()
+        f.cl)
 
 if __name__ == '__main__':
     schedule.every().day.at("06:00").do(main)
