@@ -14,9 +14,14 @@ import smtplib
 import python_weather
 import asyncio
 
+import schedule
+import time
+
 import assignmentRequest
 import wikiRand
 import eventsToday
+
+
 
 # Metod returns current date in readable format
 def get_date():
@@ -122,8 +127,8 @@ def main():
                             weather = asyncio.run(get_weather(LOCATION))
 
                             # Get Appointments
-                            appointments = get_appointments(__location__)
-                            # appointments = ""
+                            #appointments = get_appointments(__location__)
+                            appointments = ""
 
                             events = eventsToday.getEvents(LOCATION)
 
@@ -215,4 +220,9 @@ def main():
         f.close()
 
 if __name__ == '__main__':
-    main()
+    schedule.every().day.at("06:00").do(main)
+    schedule.every().day.at("07:00").do(main)
+    schedule.every().day.at("23:20").do(main)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

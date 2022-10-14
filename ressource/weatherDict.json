@@ -3,6 +3,7 @@
         "Partly cloudy": "leicht bewölkt",
         "Sunny": "sonnig",
         "Cloudy": "wolkig",
-        "Rain": "regnerisch"
+        "Rain": "regnerisch",
+        "Clear": "wolkenlos"
     }
 }
