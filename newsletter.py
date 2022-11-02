@@ -78,7 +78,7 @@ def get_stockData():
 # Main method
 def main():
 
-   _location__ = pathlib.Path().resolve()
+   _location__ = pathlib.Path(__file__).parent.resolve()
 
     # Define global variables
     global SENDER
