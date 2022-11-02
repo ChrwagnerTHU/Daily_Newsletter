@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import json
+import pathlib
 import os
 
 from datetime import date
@@ -77,7 +78,7 @@ def get_stockData():
 # Main method
 def main():
 
-    _ose(_location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+   _location__ = pathlib.Path().resolve()
 
     # Define global variables
     global SENDER
