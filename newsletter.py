@@ -14,9 +14,6 @@ import smtplib
 import python_weather
 import asyncio
 
-import schedule
-import time
-
 import assignmentRequest
 import wikiRand
 import eventsToday
@@ -220,9 +217,4 @@ def main():
         f.cl)
 
 if __name__ == '__main__':
-    schedule.every().day.at("06:00").do(main)
-    schedule.every().day.at("07:00").do(main)
-    schedule.every().day.at("23:20").do(main)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    main()
