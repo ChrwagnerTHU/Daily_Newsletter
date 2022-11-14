@@ -121,7 +121,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
             # Read log file
                 with open (__location__ + "/ressource/log.txt") as l:
                     log = l.read()
-                    logUser = user + " -- " + get_date()
+                    logUser = user + " -- " + date.today()
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
                         RECIEVER = data['User'][user]['RECIEVER']
@@ -218,6 +218,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         sent = True
                     l.close()
             except Exception as e:
+                # TODO: Write exception to log file
                 print(str(e))
                 count = count + 1
     # Update log file
