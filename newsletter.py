@@ -25,6 +25,15 @@ import eventsToday
 def get_date():
     return date.today().strftime("%d.%m.%Y")
 
+def get_dayOfWeek():
+    dow = date.today().weekday()
+    with open (__location__ + "/ressource/weekdayDict.json", "r") as f:
+        data = json.load(f)
+        dow = data['Weekday'][dow]
+    f.close()
+    return dow
+
+
 # Method for sending mail containing the newsletter
 def send_mail(content):
     s = smtplib.SMTP(MAILSERVER, PORT)
@@ -145,6 +154,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             # Set general data into template
                             content = mailTemplate.read()
                             content = Template(content).safe_substitute(name=NAME)
+                            content = Template(content).safe_substitute(dow=get_dayOfWeek())
                             content = Template(content).safe_substitute(date_today=get_date())
 
                             # Set Weather data into Template
