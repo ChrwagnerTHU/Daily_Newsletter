@@ -2,10 +2,7 @@
     "info": {
         "stocks": true,
         "etfs": true,
-        "cryptos": true,
-        "news": false,
-        "summary": true,
-        "display_all": true
+        "cryptos": true
     },
     "stocks": [
         {
