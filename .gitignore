@@ -4,3 +4,4 @@ ressource/config.json
 ressource/log.txt
 dev/
 ressource/config.json
+finance_requests/plots/*
