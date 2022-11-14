@@ -1,5 +1,3 @@
-#! /usr/bin/python3
-
 import json, requests
 from bs4 import BeautifulSoup
 from string import Template 
