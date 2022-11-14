@@ -11,37 +11,43 @@ import datetime
 import json
 import time
 
+# plotting
+import pandas as pd
+import matplotlib.pyplot as plt
+
 class requester:
     base_url = "https://www.alphavantage.co/query?"
     usdEuroExchangeRate = 1
 
     """ Constructor """
-    def __init__(self, api_key, config_path: str):
-        self.api_key = api_key
+    def __init__(self, api_key: str = "", config_path: str = ""):
+        if api_key != "" and config_path != "":
+            self.api_key = api_key
 
-        with open(config_path, 'r') as config_file:
-            config = json.load(config_file)
+            with open(config_path, 'r') as config_file:
+                config = json.load(config_file)
 
-        # use sets to avoid duplicates of symbols
-        self.stocks = set()
-        self.cryptos = set()
-        self.etfs = set()
-        
-        # get stock/etf/crypto symbols if desired
-        if config['info']['stocks']:
-            for stock in config['stocks']:
-                self.stocks.add(stock['symbol'])
+            # use sets to avoid duplicates of symbols
+            self.stocks = set()
+            self.cryptos = set()
+            self.etfs = set()
+            
+            # get stock/etf/crypto symbols if desired
+            if config['info']['stocks']:
+                for stock in config['stocks']:
+                    self.stocks.add(stock['symbol'])
 
-        if config['info']['etfs']:
-            for etf in config['etfs']:
-                self.etfs.add(etf['symbol'])
+            if config['info']['etfs']:
+                for etf in config['etfs']:
+                    self.etfs.add(etf['symbol'])
 
-        if config['info']['cryptos']:
-            for crypto in config['cryptos']:
-                self.cryptos.add(crypto['symbol'])
-        
-        self.usdEuroExchangeRate = self.getExchangeRate('USD', 'EUR')
-        time.sleep(12)
+            if config['info']['cryptos']:
+                for crypto in config['cryptos']:
+                    self.cryptos.add(crypto['symbol'])
+            
+            self.usdEuroExchangeRate = self.getExchangeRate('USD', 'EUR')
+            time.sleep(12)
+
 
     """ Get stock, etf and crypto data
     (the last 7 days (stock and etf without the weekend)) """
@@ -51,6 +57,9 @@ class requester:
         data["stocks"] = self.getStocksDaily()
         data["etfs"] = self.getEtfsDaily()
         data["cryptos"] = self.getCryptosDaily()
+
+        with open('data.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
 
         return data
 
@@ -69,46 +78,40 @@ class requester:
         return float(data[datetime.datetime.today().strftime('%Y-%m-%d')]["4. close"])
 
     def getStocksDaily(self):
-        stocks_list = list()
+        stocks_list = dict()
 
         # get data for each symbol
         for symbol in self.stocks:
-            stock_with_symbol = dict()
-            stock_with_symbol[symbol] = self.getStockOrEtfDaily(symbol)
-            stocks_list.append(stock_with_symbol)
+            stocks_list[symbol] = self.getStockOrEtfDaily(symbol)
             # request only 5 times in a minute
             time.sleep(12)
         
         return stocks_list
 
     def getEtfsDaily(self):
-        etfs_list = list()
+        etfs_list = dict()
 
         # get data for each symbol
         for symbol in self.etfs:
-            etf_with_symbol = dict()
-            etf_with_symbol[symbol] = self.getStockOrEtfDaily(symbol)
-            etfs_list.append(etf_with_symbol)
+            etfs_list[symbol] = self.getStockOrEtfDaily(symbol)
             # request only 5 times in a minute
             time.sleep(12)
         
         return etfs_list
 
     def getCryptosDaily(self):
-        cryptos_list = list()
+        cryptos_list = dict()
 
         # get data for each symbol
         for symbol in self.cryptos:
-            crypto_with_symbol = dict()
-            crypto_with_symbol[symbol] = self.getCryptoDaily(symbol)
-            cryptos_list.append(crypto_with_symbol)
+            cryptos_list[symbol] = self.getCryptoDaily(symbol)
             # request only 5 times in a minute
             time.sleep(12)
         
         return cryptos_list
 
     def getStockOrEtfDaily(self, symbol):
-        function_name = "function=TIME_SERIES_DAILY"
+        function_name = "function=TIME_SERIES_DAILY_ADJUSTED"
         today = datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time())
 
         # get data
@@ -124,7 +127,7 @@ class requester:
 
             if delta.days < 7:
                 price = float(stock_info["4. close"]) * self.usdEuroExchangeRate
-                data_reduced[stock_date] = price
+                data_reduced[date.strftime('%d.%m')] = price
 
         return data_reduced
 
@@ -145,6 +148,32 @@ class requester:
 
             if delta.days < 7:
                 price = float(crypto_info["4a. close (USD)"]) * self.usdEuroExchangeRate
-                data_reduced[crypto_date] = price
+                data_reduced[date.strftime('%d.%m')] = price
 
         return data_reduced
+
+    def getRequestedData(self):
+        with open('./data.json') as handle:
+            dictdump = json.loads(handle.read())
+        return dictdump
+
+    def plot(self, userid : str):
+        data = self.getRequestedData()
+        
+        # plot stocks
+        df = pd.DataFrame(data["stocks"])
+        df.plot()
+        #plt.show()
+        plt.savefig('./plots/stocks_' + userid + '.png')
+
+        # plot etfs
+        df = pd.DataFrame(data["etfs"])
+        df.plot()
+        #plt.show()
+        plt.savefig('./plots/etfs_' + userid + '.png')
+
+        # plot crytos
+        df = pd.DataFrame(data["cryptos"])
+        df.plot()
+        #plt.show()
+        plt.savefig('./plots/cryptos_' + userid + '.png')
