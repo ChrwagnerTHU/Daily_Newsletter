@@ -4,6 +4,7 @@
         "Sunny": "sonnig",
         "Cloudy": "wolkig",
         "Rain": "regnerisch",
-        "Clear": "wolkenlos"
+        "Clear": "wolkenlos",
+        "Fog": "neblig"
     }
 }

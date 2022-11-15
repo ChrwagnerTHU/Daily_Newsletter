@@ -5,6 +5,7 @@ import pathlib
 import os
 
 from datetime import date
+from datetime import datetime
 from re import X
 from string import Template 
 
@@ -20,18 +21,17 @@ import wikiRand
 import eventsToday
 
 
-
 # Metod returns current date in readable format
 def get_date():
     return date.today().strftime("%d.%m.%Y")
 
-def get_dayOfWeek():
-    dow = date.today().weekday()
+def get_dayOfWeek(__location__):
+    dow = date.today().strftime("%A")
     with open (__location__ + "/ressource/weekdayDict.json", "r") as f:
         data = json.load(f)
         dow = data['Weekday'][dow]
     f.close()
-    return dow
+    return str(dow)
 
 
 # Method for sending mail containing the newsletter
@@ -121,7 +121,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
             # Read log file
                 with open (__location__ + "/ressource/log.txt") as l:
                     log = l.read()
-                    logUser = user + " -- " + date.today()
+                    logUser = user + " -- " + get_date()
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
                         RECIEVER = data['User'][user]['RECIEVER']
@@ -154,7 +154,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             # Set general data into template
                             content = mailTemplate.read()
                             content = Template(content).safe_substitute(name=NAME)
-                            content = Template(content).safe_substitute(dow=get_dayOfWeek())
+                            content = Template(content).safe_substitute(dow=get_dayOfWeek(__location__))
                             content = Template(content).safe_substitute(date_today=get_date())
 
                             # Set Weather data into Template
