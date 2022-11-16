@@ -213,7 +213,6 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         send_mail(content)
                         newLog = logUser + "\n"
                         sent = True
-                        break
                     else:
                         sent = True
                     l.close()
