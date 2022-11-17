@@ -21,17 +21,18 @@ import wikiRand
 import eventsToday
 
 
+
 # Metod returns current date in readable format
 def get_date():
     return date.today().strftime("%d.%m.%Y")
 
-def get_dayOfWeek(__location__):
+def get_dayOfWeek():
     dow = date.today().strftime("%A")
     with open (__location__ + "/ressource/weekdayDict.json", "r") as f:
         data = json.load(f)
         dow = data['Weekday'][dow]
     f.close()
-    return str(dow)
+    return dow
 
 
 # Method for sending mail containing the newsletter
@@ -110,19 +111,18 @@ with open (__location__ + "/ressource/config.json", "r") as f:
     log = ""
     newLog = ""
     
-    with open (__location__ + "/ressource/log.txt") as l:
-        log = l.read()
-        # For each user contained in config file do the folowing
-        for user in data['User']:
-            # Try sending newsletter
-            count = 0
-            sent = False
-            logUser = ""
-            # Try sending max five times
-            while count <= 5 and not sent:
-                try:
-                # Read log file
-                    logUser = user + " -- " + get_date()
+    # For each user contained in config file do the folowing
+    for user in data['User']:
+        # Try sending newsletter
+        count = 0
+        sent = False
+        # Try sending max five times
+        while count <= 5 and not sent:
+            try:
+            # Read log file
+                with open (__location__ + "/ressource/log.txt") as l:
+                    log = l.read()
+                    logUser = user + " -- " + str(datetime.now())
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
                         RECIEVER = data['User'][user]['RECIEVER']
@@ -155,14 +155,14 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             # Set general data into template
                             content = mailTemplate.read()
                             content = Template(content).safe_substitute(name=NAME)
-                            content = Template(content).safe_substitute(dow=get_dayOfWeek(__location__))
+                            content = Template(content).safe_substitute(dow=get_dayOfWeek())
                             content = Template(content).safe_substitute(date_today=get_date())
 
                             # Set Weather data into Template
                             if weather:
                                 with open (__location__ + "/ressource/weatherDict.json", "r") as w:
-                                    data = json.load(w)
-                                    weatherDesc = data['Weather'][weather[1]]
+                                    weatherData = json.load(w)
+                                    weatherDesc = weatherData['Weather'][weather[1]]
                                     if not weatherDesc:
                                         weatherDesc = weather[1]
                                     w.close()
@@ -212,15 +212,17 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         
                         # Send mail
                         send_mail(content)
-                        newLog = logUser + "\n"
-                        l.write(newLog)
+                        newLog = newLog + logUser + "\n"
                         sent = True
-                        continue
+                        break
                     else:
                         sent = True
-                except Exception as e:
-                    # TODO: Write exception to log file
-                    print(str(e))
-                    count = count + 1
-    l.close()
-f.close()
+                    l.close()
+            except Exception as e:
+                # TODO: Write exception to log file
+                print(str(e))
+                count = count + 1
+    # Update log file
+    with open (__location__ + "/ressource/log.txt", "a") as l:
+        l.write(newLog)
+        l.close()
