@@ -110,17 +110,18 @@ with open (__location__ + "/ressource/config.json", "r") as f:
     log = ""
     newLog = ""
     
-    # For each user contained in config file do the folowing
-    for user in data['User']:
-        # Try sending newsletter
-        count = 0
-        sent = False
-        # Try sending max five times
-        while count <= 5 and not sent:
-            try:
-            # Read log file
-                with open (__location__ + "/ressource/log.txt") as l:
-                    log = l.read()
+    with open (__location__ + "/ressource/log.txt") as l:
+        log = l.read()
+        # For each user contained in config file do the folowing
+        for user in data['User']:
+            # Try sending newsletter
+            count = 0
+            sent = False
+            logUser = ""
+            # Try sending max five times
+            while count <= 5 and not sent:
+                try:
+                # Read log file
                     logUser = user + " -- " + get_date()
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
@@ -212,15 +213,14 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         # Send mail
                         send_mail(content)
                         newLog = logUser + "\n"
+                        l.write(newLog)
                         sent = True
+                        continue
                     else:
                         sent = True
-                    l.close()
-            except Exception as e:
-                # TODO: Write exception to log file
-                print(str(e))
-                count = count + 1
-    # Update log file
-    with open (__location__ + "/ressource/log.txt", "a") as l:
-        l.write(newLog)
-        l.close()
+                except Exception as e:
+                    # TODO: Write exception to log file
+                    print(str(e))
+                    count = count + 1
+    l.close()
+f.close()
