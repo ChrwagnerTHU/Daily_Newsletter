@@ -5,3 +5,4 @@ ressource/log.txt
 dev/
 ressource/config.json
 finance_requests/plots/*
+finance_requests/data.json
