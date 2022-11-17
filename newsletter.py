@@ -122,7 +122,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
             # Read log file
                 with open (__location__ + "/ressource/log.txt") as l:
                     log = l.read()
-                    logUser = user + " -- " + str(datetime.now())
+                    logUser = user + " -- " + get_date()
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
                         RECIEVER = data['User'][user]['RECIEVER']
@@ -212,6 +212,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         
                         # Send mail
                         send_mail(content)
+                        logUser = logUser + "\nSent at: " + str(datetime.now())
                         newLog = newLog + logUser + "\n"
                         sent = True
                         break
