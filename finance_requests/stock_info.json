@@ -8,13 +8,13 @@
         {
             "symbol": "AMZN",
             "quantity": 40,
-            "purchase_price": 100,
+            "total_price": 5000,
             "currency": "USD"
         },
         {
-            "symbol": "AIR",
-            "quantity": 40,
-            "purchase_price": 100,
+            "symbol": "EADSF",
+            "quantity": 30,
+            "total_price": 3000,
             "currency": "USD"
         }
     ],
@@ -22,15 +22,15 @@
         {
             "symbol": "URTH",
             "quantity": 10,
-            "purchase_price": 150,
-            "currency": "EUR"
+            "total_price": 150,
+            "currency": "USD"
         }
     ],
     "cryptos": [
         {
             "symbol": "ETH",
             "quantity": 1.2,
-            "purchase_price": 2700,
+            "total_price": 2700,
             "currency": "USD"
         }
     ]
