@@ -5,6 +5,7 @@
         "Cloudy": "wolkig",
         "Rain": "regnerisch",
         "Clear": "wolkenlos",
-        "Fog": "neblig"
+        "Fog": "neblig",
+        "Light Rain": "leicht regnerisch"
     }
 }
