@@ -6,6 +6,7 @@
         "Rain": "regnerisch",
         "Clear": "wolkenlos",
         "Fog": "neblig",
-        "Light rain": "leicht regnerisch"
+        "Light rain": "leicht regnerisch",
+        "Light drizzle and rain, mist": "leicht regnerisch und neblig"
     }
 }
