@@ -42,7 +42,7 @@ def send_mail(content):
     s.login(SENDER, PWD)
 
     msg = MIMEMultipart('alternative')
-    msg['From'] = SENDER
+    msg['From'] = "Daily Newsletter <" + str(SENDER) + ">"
     msg['To'] = RECIEVER
     msg['Subject'] = 'Newsletter vom: ' + get_date()
     msg.attach(MIMEText(content, 'html'))
