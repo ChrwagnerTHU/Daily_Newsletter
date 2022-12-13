@@ -220,8 +220,8 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         sent = True
                     l.close()
             except Exception as e:
-                # TODO: Write exception to log file
                 print(str(e))
+                newLog = newLog + "ERROR: " + str(e) + " at: " + str(datetime.now()) + "\n"
                 count = count + 1
     # Update log file
     with open (__location__ + "/ressource/log.txt", "a") as l:
