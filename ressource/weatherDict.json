@@ -9,6 +9,8 @@
         "Light rain": "leicht regnerisch",
         "Light drizzle and rain, mist": "leicht regnerisch und neblig",
         "Mist": "neblig",
-        "Light snow, mist": "neblig bei leichtem Schneefall"
+        "Light snow, mist": "neblig bei leichtem Schneefall",
+        "Light snow": "leicht verschneit",
+        "Snow": "verschneit"
     }
 }
