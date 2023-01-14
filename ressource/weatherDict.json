@@ -13,6 +13,11 @@
         "Light snow": "leicht verschneit",
         "Snow": "verschneit",
         "Light freezing drizzle and rain, mist": "leicht gefrierenden Regen und neblig",
-        "Freezing rain": "gefrierend regnerisch"
+        "Freezing rain": "gefrierend regnerisch",
+        "Overcast": "bewölkt",
+        "Freezing Fog": "gefrierend neblig",
+        "Light Rain Shower": "leicht regnerisch",
+        "Fog in vicinity, shallow fog": "flach neblig in der Umgebung",
+        "Patches of fog": "stellenweise neblig"
     }
 }
