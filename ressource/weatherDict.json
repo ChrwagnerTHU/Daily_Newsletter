@@ -18,6 +18,8 @@
         "Freezing Fog": "gefrierend neblig",
         "Light Rain Shower": "leicht regnerisch",
         "Fog in vicinity, shallow fog": "flach neblig in der Umgebung",
-        "Patches of fog": "stellenweise neblig"
+        "Patches of fog": "stellenweise neblig",
+        "Light freezing drizzle": "leicht gefrierend nieselregnerisch",
+        "Light freezing drizzle, mist": "leicht gefrierenden Nieselregen und neblig"
     }
 }
