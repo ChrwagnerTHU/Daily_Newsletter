@@ -6,6 +6,7 @@ import os
 
 from datetime import date
 from datetime import datetime
+import time
 from re import X
 from string import Template 
 
@@ -117,7 +118,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
         count = 0
         sent = False
         # Try sending max five times
-        while count <= 5 and not sent:
+        while count <= 2 and not sent:
             try:
             # Read log file
                 with open (__location__ + "/ressource/log.txt") as l:
@@ -223,6 +224,9 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                 print(str(e))
                 newLog = newLog + "ERROR: " + str(e) + " at: " + str(datetime.now()) + "\n"
                 count = count + 1
+                if str(e) == "Cannot connect to host wttr.in:443":
+                    break
+        time.sleep(1)
     # Update log file
     with open (__location__ + "/ressource/log.txt", "a") as l:
         l.write(newLog)
