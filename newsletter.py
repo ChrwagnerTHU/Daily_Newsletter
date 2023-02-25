@@ -111,12 +111,17 @@ with open (__location__ + "/ressource/config.json", "r") as f:
 
     log = ""
     newLog = ""
+    interrupt = False
     
     # For each user contained in config file do the folowing
     for user in data['User']:
         # Try sending newsletter
         count = 0
         sent = False
+
+        if interrupt:
+            break
+
         # Try sending max five times
         while count <= 2 and not sent:
             try:
@@ -225,6 +230,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                 newLog = newLog + "ERROR: " + str(e) + " at: " + str(datetime.now()) + "\n"
                 count = count + 1
                 if str(e) == "Cannot connect to host wttr.in:443":
+                    interrupt = True
                     break
         time.sleep(1)
     # Update log file
