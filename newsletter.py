@@ -6,6 +6,7 @@ import os
 
 from datetime import date
 from datetime import datetime
+import time
 from re import X
 from string import Template 
 
@@ -42,7 +43,7 @@ def send_mail(content):
     s.login(SENDER, PWD)
 
     msg = MIMEMultipart('alternative')
-    msg['From'] = SENDER
+    msg['From'] = "Daily Newsletter <" + str(SENDER) + ">"
     msg['To'] = RECIEVER
     msg['Subject'] = 'Newsletter vom: ' + get_date()
     msg.attach(MIMEText(content, 'html'))
@@ -110,19 +111,24 @@ with open (__location__ + "/ressource/config.json", "r") as f:
 
     log = ""
     newLog = ""
+    interrupt = False
     
     # For each user contained in config file do the folowing
     for user in data['User']:
         # Try sending newsletter
         count = 0
         sent = False
+
+        if interrupt:
+            break
+
         # Try sending max five times
-        while count <= 5 and not sent:
+        while count <= 2 and not sent:
             try:
             # Read log file
                 with open (__location__ + "/ressource/log.txt") as l:
                     log = l.read()
-                    logUser = user + " -- " + str(datetime.now())
+                    logUser = user + " -- " + get_date()
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
                         RECIEVER = data['User'][user]['RECIEVER']
@@ -212,6 +218,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         
                         # Send mail
                         send_mail(content)
+                        logUser = logUser + "\nSent at: " + str(datetime.now())
                         newLog = newLog + logUser + "\n"
                         sent = True
                         break
@@ -219,9 +226,13 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         sent = True
                     l.close()
             except Exception as e:
-                # TODO: Write exception to log file
                 print(str(e))
+                newLog = newLog + "ERROR: " + str(e) + " at: " + str(datetime.now()) + "\n"
                 count = count + 1
+                if str(e) == "Cannot connect to host wttr.in:443":
+                    interrupt = True
+                    break
+        time.sleep(1)
     # Update log file
     with open (__location__ + "/ressource/log.txt", "a") as l:
         l.write(newLog)
