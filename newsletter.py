@@ -14,12 +14,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
-import python_weather
 import asyncio
 
 import assignmentRequest
 import wikiRand
 import eventsToday
+import weather
 
 
 
@@ -53,16 +53,12 @@ def send_mail(content):
     s.quit()
 
 # Method get current weather forecast for set location
-async def get_weather(location):
-    async with python_weather.Client() as client:
-        weather = await client.get(location)
-        temp = weather.current.temperature
-        desc = weather.current.description
-        avg = ""
-        for forecasts in weather.forecasts:
-            avg = forecasts.temperature
-            break
-        return temp, desc, avg
+def get_weather(location):
+    forecast = weather.get_weather(location)
+    temp = forecast['TEMP']
+    feels = forecast['FEELS']
+    desc = forecast['DESC']
+    return temp, feels, desc
 
 # Outlook Calendar API
 def get_appointments(__location__):
@@ -137,7 +133,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         NAME = user
 
                         # Get Weather Information
-                        weather = asyncio.run(get_weather(LOCATION))
+                        todayweather = get_weather(LOCATION)
 
                         # Get Appointments
                         # appointments = get_appointments(__location__)
@@ -168,15 +164,16 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             if weather:
                                 with open (__location__ + "/ressource/weatherDict.json", "r") as w:
                                     weatherData = json.load(w)
-                                    weatherDesc = weatherData['Weather'][weather[1]]
-                                    if not weatherDesc:
-                                        weatherDesc = weather[1]
+                                    if todayweather[2] in weatherData:
+                                        weatherDesc = weatherData['Weather'][todayweather[2]]
+                                    else:
+                                        weatherDesc = todayweather[2]
                                     w.close()
                                 weatherSnipped = snipped['WEATHER']
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(location=LOCATION)
-                                weatherSnipped = Template(weatherSnipped).safe_substitute(avg=weather[2])
+                                weatherSnipped = Template(weatherSnipped).safe_substitute(feels=todayweather[1])
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(desc=weatherDesc)
-                                weatherSnipped = Template(weatherSnipped).safe_substitute(temp=weather[0])
+                                weatherSnipped = Template(weatherSnipped).safe_substitute(temp=todayweather[0])
                                 content = Template(content).safe_substitute(weatherTemplate=weatherSnipped)
                             else:
                                 content = Template(content).safe_substitute(weatherTemplate="")

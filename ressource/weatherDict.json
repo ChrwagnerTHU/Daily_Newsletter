@@ -1,28 +1,6 @@
 {
     "Weather": {
-        "Partly cloudy": "leicht bewölkt",
-        "Sunny": "sonnig",
-        "Cloudy": "wolkig",
-        "Rain": "regnerisch",
-        "Clear": "wolkenlos",
-        "Fog": "neblig",
-        "Light rain": "leicht regnerisch",
-        "Light drizzle and rain, mist": "leicht regnerisch und neblig",
-        "Mist": "neblig",
-        "Light snow, mist": "neblig bei leichtem Schneefall",
-        "Light snow": "leicht verschneit",
-        "Snow": "verschneit",
-        "Light freezing drizzle and rain, mist": "leicht gefrierenden Regen und neblig",
-        "Freezing rain": "gefrierend regnerisch",
-        "Overcast": "bewölkt",
-        "Freezing Fog": "gefrierend neblig",
-        "Light Rain Shower": "leicht regnerisch",
-        "Fog in vicinity, shallow fog": "flach neblig in der Umgebung",
-        "Patches of fog": "stellenweise neblig",
-        "Light freezing drizzle": "leicht gefrierend nieselregnerisch",
-        "Light freezing drizzle, mist": "leicht gefrierenden Nieselregen und neblig",
-        "Light rain and snow": "leicht schneeregnerisch",
-        "Freezing fog": "gefrierend neblig",
-        "Rain and snow shower": "regnerisch und ggf. schneeregnerisch"
+        "light rain": "Leichter Regen",
+        "overcast clouds": "Bedeckt"
     }
 }
