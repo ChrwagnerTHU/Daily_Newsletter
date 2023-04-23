@@ -30,8 +30,8 @@ def get_weather(location):
             description[f.detailed_status] = 1
 
     description = max(description, key=description.get)
-    temp = round(temp,2)
-    feels = round(feels,2)
+    temp = round(temp,1)
+    feels = round(feels,1)
 
     weather = {'TEMP': temp,
                'FEELS': feels,
