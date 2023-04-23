@@ -164,7 +164,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             if weather:
                                 with open (__location__ + "/ressource/weatherDict.json", "r") as w:
                                     weatherData = json.load(w)
-                                    if todayweather[2] in weatherData:
+                                    if todayweather[2] in weatherData['Weather']:
                                         weatherDesc = weatherData['Weather'][todayweather[2]]
                                     else:
                                         weatherDesc = todayweather[2]
