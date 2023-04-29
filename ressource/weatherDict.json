@@ -1,9 +1,6 @@
 {
     "Weather": {
-        "Partly cloudy": "leicht bewölkt",
-        "Sunny": "sonnig",
-        "Cloudy": "wolkig",
-        "Rain": "regnerisch",
-        "Clear": "wolkenlos"
+        "light rain": "Leichter Regen",
+        "overcast clouds": "Bedeckt"
     }
 }

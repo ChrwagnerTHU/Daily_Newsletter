@@ -1,17 +1,18 @@
 {
     "App": {
-        "SENDER": "cw_assistant@gmx.de",
-        "PWD": "GMXPW2022$",
-        "MAILSERVER": "mail.gmx.net",
-        "PORT": 587
+        "SENDER": "sender@mail.de",
+        "PWD": "PWD",
+        "MAILSERVER": "mail.server.net",
+        "PORT": 123,
+        "WEATHER_API": "api_key"
     },
     "User": {
-        "Christopher": {
-            "RECIEVER": "christopher-wagner.ruhp@hotmail.de",
-            "LOCATION": "Ulm",
-            "CALENDAR": "chris-xbo@outlook.dee",
-            "CLIENT_ID": "someID",
-            "SECRET_ID": "someKey"
+        "User1": {
+            "RECIEVER": "reciever@mail.de",
+            "LOCATION": "Neustadt",
+            "CALENDAR": "calendar@mail.de",
+            "CLIENT_ID": "client",
+            "SECRET_ID": "secret"
         }
     }
 }

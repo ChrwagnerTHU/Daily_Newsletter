@@ -5,6 +5,8 @@ import pathlib
 import os
 
 from datetime import date
+from datetime import datetime
+import time
 from re import X
 from string import Template 
 
@@ -12,12 +14,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
-import python_weather
 import asyncio
 
 import assignmentRequest
 import wikiRand
 import eventsToday
+import weather
 
 
 
@@ -26,7 +28,7 @@ def get_date():
     return date.today().strftime("%d.%m.%Y")
 
 def get_dayOfWeek():
-    dow = date.today().weekday()
+    dow = date.today().strftime("%A")
     with open (__location__ + "/ressource/weekdayDict.json", "r") as f:
         data = json.load(f)
         dow = data['Weekday'][dow]
@@ -41,7 +43,7 @@ def send_mail(content):
     s.login(SENDER, PWD)
 
     msg = MIMEMultipart('alternative')
-    msg['From'] = SENDER
+    msg['From'] = "Daily Newsletter <" + str(SENDER) + ">"
     msg['To'] = RECIEVER
     msg['Subject'] = 'Newsletter vom: ' + get_date()
     msg.attach(MIMEText(content, 'html'))
@@ -51,16 +53,12 @@ def send_mail(content):
     s.quit()
 
 # Method get current weather forecast for set location
-async def get_weather(location):
-    async with python_weather.Client() as client:
-        weather = await client.get(location)
-        temp = weather.current.temperature
-        desc = weather.current.description
-        avg = ""
-        for forecasts in weather.forecasts:
-            avg = forecasts.temperature
-            break
-        return temp, desc, avg
+def get_weather(location):
+    forecast = weather.get_weather(location)
+    temp = forecast['TEMP']
+    feels = forecast['FEELS']
+    desc = forecast['DESC']
+    return temp, feels, desc
 
 # Outlook Calendar API
 def get_appointments(__location__):
@@ -109,19 +107,24 @@ with open (__location__ + "/ressource/config.json", "r") as f:
 
     log = ""
     newLog = ""
+    interrupt = False
     
     # For each user contained in config file do the folowing
     for user in data['User']:
         # Try sending newsletter
         count = 0
         sent = False
+
+        if interrupt:
+            break
+
         # Try sending max five times
-        while count <= 5 and not sent:
+        while count <= 2 and not sent:
             try:
             # Read log file
                 with open (__location__ + "/ressource/log.txt") as l:
                     log = l.read()
-                    logUser = user + " -- " + date.today()
+                    logUser = user + " -- " + get_date()
                     # Check if todays newsletter has already been sent
                     if not logUser in log:
                         RECIEVER = data['User'][user]['RECIEVER']
@@ -130,7 +133,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         NAME = user
 
                         # Get Weather Information
-                        weather = asyncio.run(get_weather(LOCATION))
+                        todayweather = get_weather(LOCATION)
 
                         # Get Appointments
                         # appointments = get_appointments(__location__)
@@ -160,16 +163,17 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             # Set Weather data into Template
                             if weather:
                                 with open (__location__ + "/ressource/weatherDict.json", "r") as w:
-                                    data = json.load(w)
-                                    weatherDesc = data['Weather'][weather[1]]
-                                    if not weatherDesc:
-                                        weatherDesc = weather[1]
+                                    weatherData = json.load(w)
+                                    if todayweather[2] in weatherData['Weather']:
+                                        weatherDesc = weatherData['Weather'][todayweather[2]]
+                                    else:
+                                        weatherDesc = todayweather[2]
                                     w.close()
                                 weatherSnipped = snipped['WEATHER']
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(location=LOCATION)
-                                weatherSnipped = Template(weatherSnipped).safe_substitute(avg=weather[2])
+                                weatherSnipped = Template(weatherSnipped).safe_substitute(feels=todayweather[1])
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(desc=weatherDesc)
-                                weatherSnipped = Template(weatherSnipped).safe_substitute(temp=weather[0])
+                                weatherSnipped = Template(weatherSnipped).safe_substitute(temp=todayweather[0])
                                 content = Template(content).safe_substitute(weatherTemplate=weatherSnipped)
                             else:
                                 content = Template(content).safe_substitute(weatherTemplate="")
@@ -211,16 +215,21 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         
                         # Send mail
                         send_mail(content)
-                        newLog = logUser + "\n"
+                        logUser = logUser + "\nSent at: " + str(datetime.now())
+                        newLog = newLog + logUser + "\n"
                         sent = True
                         break
                     else:
                         sent = True
                     l.close()
             except Exception as e:
-                # TODO: Write exception to log file
                 print(str(e))
+                newLog = newLog + "ERROR: " + str(e) + " at: " + str(datetime.now()) + "\n"
                 count = count + 1
+                if str(e) == "Cannot connect to host wttr.in:443":
+                    interrupt = True
+                    break
+        time.sleep(1)
     # Update log file
     with open (__location__ + "/ressource/log.txt", "a") as l:
         l.write(newLog)
