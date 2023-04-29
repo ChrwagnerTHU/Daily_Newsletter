@@ -1,10 +1,15 @@
-import json
 import finance_request
+ 
+#requester = finance_request.requester("J1AF3SZ0S4184JGT", 'stock_info.json')
 
-symbols = {"AIR"}
-requester = finance_request.requester("J1AF3SZ0S4184JGT", 'stock_info.json')
+# for test usage (2nd time, after data is saved as data.json)
+requester = finance_request.requester(config_path='stock_info.json')
 
-data = requester.getDataDaily()
+# get data and save it as data.json
+#data = requester.getDataDaily()
 
-with open('data.json', 'w', encoding='utf-8') as f:
-    json.dump(data, f, ensure_ascii=False, indent=4)
+# plot data and save as png with userid
+requester.plotCourse("steinie")
+
+# get balance
+requester.plotStockBalance("steinie")
