@@ -1,0 +1,18 @@
+{
+    "App": {
+        "SENDER": "sender@mail.de",
+        "PWD": "PWD",
+        "MAILSERVER": "mail.server.net",
+        "PORT": 123,
+        "WEATHER_API": "api_key"
+    },
+    "User": {
+        "User1": {
+            "RECIEVER": "reciever@mail.de",
+            "LOCATION": "Neustadt",
+            "CALENDAR": "calendar@mail.de",
+            "CLIENT_ID": "client",
+            "SECRET_ID": "secret"
+        }
+    }
+}
