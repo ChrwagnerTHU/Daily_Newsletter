@@ -1,78 +1,61 @@
 
+from datetime import datetime, time, timedelta
+import requests
+from icalendar import Calendar
 
-from calendar import Calendar
-import json
-from sqlite3 import SQLITE_CREATE_INDEX
-from O365 import Account, MSGraphProtocol, FileSystemTokenBackend
-import datetime as dt
-from calendar import monthrange
 import os.path
+import json
 
 
-def getAssignmentsOutlook(USER, __location__):
+def getAssignments(USER, __location__):
 
-    global CLIENT_ID
-    global SECRET_ID
-    global CALENDAR
+    appointments = ""
 
     with open (__location__ + "/ressource/config.json", "r") as f:
         data = json.load(f)
-
-        CLIENT_ID = data['User'][USER]['CLIENT_ID']
-        SECRET_ID = data['User'][USER]['SECRET_ID']
-        CALENDAR = data['User'][USER]['CALENDAR']
-
-    credentials = (CLIENT_ID, SECRET_ID)
-
-    protocol = MSGraphProtocol(defualt_resource=CALENDAR)
-    scopes = ['User.Read', 'User.ReadBasic.All', 'Calendars.Read']
-    token_backend = FileSystemTokenBackend(token_path=__location__, token_filename='o365_token.txt')
-    account = Account(credentials, token_backend=token_backend, protocol=protocol)
+        ICS = data['User'][USER]['CALENDAR']
     
-    # Check if token has already been created
-    if not account.is_authenticated:
-        account.authenticate(scopes=scopes)
+    if not ICS:
+        return ""
 
-    schedule = account.schedule()
-    calendar = schedule.get_default_calendar()
+    response = requests.get(ICS)
 
-    currentDay = dt.datetime.now().day
-    currentMonth = dt.datetime.now().month
-    currentYear = dt.datetime.now().year
+    ical_data = response.text
+    calendar = Calendar.from_ical(ical_data)
 
-    #Check if currentDate + 1 is in new month and create query
-    if currentMonth == 12 and currentDay == 31:
-        q = calendar.new_query('start').greater_equal(dt.date(currentYear, currentMonth, currentDay))
-        q.chain('and').on_attribute('start').less_equal(dt.datetime(currentYear + 1, 1, 1))
-    elif currentDay + 1 > monthrange(currentYear, currentMonth)[1]:
-        q = calendar.new_query('start').greater_equal(dt.date(currentYear, currentMonth, currentDay))
-        q.chain('and').on_attribute('start').less_equal(dt.datetime(currentYear,  currentMonth + 1, 1))
-    else:
-        q = calendar.new_query('start').greater_equal(dt.date(currentYear, currentMonth, currentDay))
-        q.chain('and').on_attribute('start').less_equal(dt.datetime(currentYear, currentMonth, currentDay + 1))
+    today_min = datetime.combine(datetime.today(), time.min)
+    today_max = datetime.combine(datetime.today(), time.max)
+    tomorrow = datetime.combine(datetime.today() + timedelta(days=1), time.min)
 
-    # Query to get Entries for current day
-    events = calendar.get_events(query=q, include_recurring=False) 
+    for event in calendar.walk("VEVENT"):
+        start = event.get("DTSTART").dt
+        end = event.get("DTEND").dt
 
-    result = ""
-    for event in events:
-        result = event.subject + " von: " + event.start.strftime("%H.%M") + " Uhr - bis: " + event.end.strftime("%H.%M") + " Uhr<br>"
+        try:
+            if not start.time():
+                start = datetime.combine(start, datetime.min.time())
+                end = datetime.combine(end, datetime.min.time())
+        except:
+            start = datetime.combine(start, datetime.min.time())
+            end = datetime.combine(end, datetime.min.time())
+        
+        try:
+            start = start.replace(tzinfo=None)
+            end = end.replace(tzinfo=None)
+        except:
+            pass
 
-    if result:
-        size = len(result)
-        result = result[:size - 4]
-        return result
-    else:
-        return "Heute sind keine Einträge im Kalender"
-
-# TODO: Implement Method
-def getAssignmentsGmail(USER, __location__):
-    return "Uminplemented"
-
-# TODO: Implement Method
-def getAssignmentsGmx(USER, __location__):
-    return "Uminplemented"
+        if today_min <= start <= today_max:
+            if start.time() == time.min:
+                appointments = appointments + event.get("SUMMARY") + "\n"
+            elif end >= tomorrow :
+                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " Uhr\n"
+            else:
+                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " bis: " + str(event.get("DTEND").dt.strftime("%H:%M")) + " Uhr\n"
+        
+    return appointments
+    
 
 if __name__ == '__main__':
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-    getAssignmentsOutlook("Christopher", __location__)
+    getAssignments("Christopher", __location__)

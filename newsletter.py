@@ -63,20 +63,7 @@ def get_weather(location):
 # Outlook Calendar API
 def get_appointments(__location__):
     # TODO: Get diffrent Calendar providers
-    domain = CALENDAR[CALENDAR.index('@') + 1 : ]
-    if not domain == "":
-        if "outlook" in domain or "hotmail" in domain:
-            return assignmentRequest.getAssignmentsOutlook(NAME, __location__)
-        elif "gmx" in domain:
-            return ""
-        elif "web" in domain:
-            return ""
-        elif "gmail" in domain:
-            return ""
-        else:
-            return ""
-    else:
-        return ""
+    return assignmentRequest.getAssignments(NAME, __location__)
 
 # TODO: Get Stockmarket data
 def get_stockData():
@@ -136,8 +123,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         todayweather = get_weather(LOCATION)
 
                         # Get Appointments
-                        # appointments = get_appointments(__location__)
-                        appointments = ""
+                        appointments = get_appointments(__location__)
 
                         events = eventsToday.getEvents(LOCATION)
 
