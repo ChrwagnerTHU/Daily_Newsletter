@@ -2,6 +2,6 @@
     "Weather": {
         "light rain": "Leichter Regen",
         "overcast clouds": "Bedeckt",
-        "broken clouds": "Teilweise Bedeckt",
+        "broken clouds": "Teilweise Bedeckt"
     }
 }
