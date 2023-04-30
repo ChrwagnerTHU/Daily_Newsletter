@@ -10,9 +10,7 @@
         "User1": {
             "RECIEVER": "reciever@mail.de",
             "LOCATION": "Neustadt",
-            "CALENDAR": "calendar@mail.de",
-            "CLIENT_ID": "client",
-            "SECRET_ID": "secret"
+            "CALENDAR": "https://Link/To/calendar.ics"
         }
     }
 }
