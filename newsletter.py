@@ -58,7 +58,9 @@ def get_weather(location):
     temp = forecast['TEMP']
     feels = forecast['FEELS']
     desc = forecast['DESC']
-    return temp, feels, desc
+    min = forecast['MIN']
+    max = forecast['MAX']
+    return temp, feels, desc, min, max
 
 # Outlook Calendar API
 def get_appointments(__location__):
@@ -160,6 +162,8 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(feels=todayweather[1])
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(desc=weatherDesc)
                                 weatherSnipped = Template(weatherSnipped).safe_substitute(temp=todayweather[0])
+                                weatherSnipped = Template(weatherSnipped).safe_substitute(min=todayweather[3])
+                                weatherSnipped = Template(weatherSnipped).safe_substitute(max=todayweather[4])
                                 content = Template(content).safe_substitute(weatherTemplate=weatherSnipped)
                             else:
                                 content = Template(content).safe_substitute(weatherTemplate="")

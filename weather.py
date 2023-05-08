@@ -19,22 +19,34 @@ def get_weather(location):
     weatherList = forecast.forecast.weathers[0:forecast_interval]
     temp = 0
     feels = 0
+    min = float('inf')
+    max = float('-inf')
     description = {}
 
     for f in weatherList:
         temp = temp + ((f.temp['temp']- 273.15) * 1/forecast_interval)
         feels = feels + ((f.temp['feels_like']- 273.15) * 1/forecast_interval)
+        if (f.temp['temp_min'] - 273.15) < min:
+            min = (f.temp['temp_min'] - 273.15)
+        if (f.temp['temp_max'] - 273.15) > min:
+            max = (f.temp['temp_max'] - 273.15)
         if f.detailed_status in description:
             description[f.detailed_status] = description[f.detailed_status] + 1
         else:
             description[f.detailed_status] = 1
-
-    description = max(description, key=description.get)
+    try:
+        description = max(description, key=description.get)
+    except:
+        description = "Wechselhaft"
     temp = round(temp,1)
     feels = round(feels,1)
+    min = round(min, 1)
+    max = round(max, 1)
 
     weather = {'TEMP': temp,
                'FEELS': feels,
-               'DESC': description}
+               'DESC': description,
+               'MIN': min,
+               'MAX': max}
     
     return weather
