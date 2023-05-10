@@ -1,5 +1,6 @@
 
 from datetime import datetime, time, timedelta
+from dateutil.rrule import rrulestr
 import requests
 from icalendar import Calendar
 
@@ -45,13 +46,20 @@ def getAssignments(USER, __location__):
         except:
             pass
 
-        if today_min <= start <= today_max:
+        occurrences = ""
+            
+        if 'RRULE' in event:
+            recurrence_rule = event['RRULE']
+            rule = rrulestr(recurrence_rule.to_ical().decode())
+            occurrences = [occ.replace(tzinfo=None) for occ in rule]
+
+        if (today_min <= start <= today_max) or ([dt for dt in occurrences if today_min <= dt <= today_max]) :
             if start.time() == time.min:
-                appointments = appointments + event.get("SUMMARY") + "\n"
+                appointments = appointments + event.get("SUMMARY") + "<br>"
             elif end >= tomorrow :
-                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " Uhr\n"
+                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " Uhr<br>"
             else:
-                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " bis: " + str(event.get("DTEND").dt.strftime("%H:%M")) + " Uhr\n"
+                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " bis: " + str(event.get("DTEND").dt.strftime("%H:%M")) + " Uhr<br>"
         
     return appointments
     
