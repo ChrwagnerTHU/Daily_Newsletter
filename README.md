@@ -19,7 +19,7 @@ The `App`section handles the Mail sender.
 |`WEATHER_API`|Your API Key from OpenWeatherMap<br>Get the key [here](https://openweathermap.org/api)
 
 ### User
-The 'User' section handles the "subscribed" users to recieve a newsletter
+The `User` section handles the "subscribed" users to recieve a newsletter
 |Option|Explanation|
 |---|---|
 |`User1`|Name of the reciever|
