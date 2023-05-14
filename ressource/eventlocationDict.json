@@ -1,13 +1,31 @@
 {
     "Location": {
         "Ulm": "25209",
+        "Berlin": "14356",
+        "Hamburg": "17838",
+        "Bremen": "14937",
+        "Kiel": "19236",
+        "Langeoog": "19951",
+        "Hannover": "17873",
+        "Frankfurt": "16601",
         "Mühltal": "21163",
         "Darmstadt": "15443",
-        "Ruhpolding": "23421",
+        "Erbach": "16248",
+        "Ober-Ramstadt": "21971",
+        "Stuttgart": "24718",
+        "Calw": "15268",
         "Heidelberg": "18053",
         "Ludwigsburg": "20422",
         "Nördlingen": "21761",
+        "Aalen": "13353",
+        "Heidenheim": "18060",
         "Fronreute": "16746",
-        "Ravensburg": "22852"
+        "Ravensburg": "22852",
+        "München": "21179",
+        "Ruhpolding": "23421",
+        "Traunstein": "25050",
+        "Waging": "25514",
+        "Leipzig": "20112",
+        "Halle": "17817"
     }
 }
