@@ -94,6 +94,12 @@ with open (__location__ + "/ressource/config.json", "r") as f:
     log = ""
     newLog = ""
     interrupt = False
+
+    # Dictionary to store events on runtime 
+    requests = {"WEATHER": {},
+                "EVENTS": {},
+                }
+
     
     # For each user contained in config file do the folowing
     for user in data['User']:
@@ -119,12 +125,21 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                         NAME = user
 
                         # Get Weather Information
-                        todayweather = get_weather(LOCATION)
+                        if not LOCATION in requests['WEATHER']:
+                            todayweather = get_weather(LOCATION)
+                            requests['WEATHER'].update({LOCATION: todayweather})
+                        else:
+                            todayweather = requests['WEATHER'][LOCATION]
 
                         # Get Appointments
                         appointments = get_appointments(__location__)
 
-                        events = eventsToday.getEvents(LOCATION)
+                        # Get Events for today
+                        if not LOCATION in requests['EVENTS']:
+                            events = eventsToday.getEvents(LOCATION)
+                            requests['EVENTS'].update({LOCATION: events})
+                        else:
+                            events = requests['EVENTS'][LOCATION]
 
                         # Get stock data
                         stock = get_stockData()
