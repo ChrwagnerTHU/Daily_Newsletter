@@ -1,5 +1,5 @@
 {
-    "WEATHER":  "<table><tr><td><h3>Wetterbericht für $location:</h3><td><td width=5></td></tr></table><table><tr><td width=60></td><td>In $location sind es heute durchschnittlich $temp°C.<br>Bei maximal $max°C und mindestens $min°C<br>Gefühlte Temperatur: $feels°C<br>Heutige Witterung: $desc.<br></td></tr></table>",
+    "WEATHER":"<table><tr><td width=60></td><td>In $location sind es heute:<br>&#8709 $temp°C.<br>&#8593 $max°C  &#8595 $min°C<br>Gefühlte Temperatur: $feels°C<br>Heutige Witterung: $desc.<br></td></tr></table>",
     "STOCK":    "<table><tr><td><h3>Die Aktienkurse deines Depots:</h3><td><td width=5></td></tr></table><table><tr><td width=60></td><td>$stockDev</td></tr></table>",
     "CALENDAR": "<table><tr><td><h3>Für heute sind Folgende Termine im Kalender vermerkt:</h3><td><td width=5></td></tr></table><table><tr><td width=60></td><td>$appointmentsToday</td></tr></table>",
     "WIKI": "<table><tr><td><h3>Der heutige Wikipedia Artikel:</h3><td><td width=5></td></tr></table><table><tr><td width=60></td><td width=\"50%\"><a href=$wikiUrl>$wikiText</a></tr></table>",
