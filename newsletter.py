@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 
 import json
-import pathlib
 import os
 
 from datetime import date
@@ -13,8 +12,6 @@ from string import Template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-
-import asyncio
 
 import assignmentRequest
 import wikiRand
