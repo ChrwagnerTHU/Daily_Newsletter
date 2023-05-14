@@ -28,7 +28,7 @@ def get_weather(location):
         feels = feels + ((f.temp['feels_like']- 273.15) * 1/forecast_interval)
         if (f.temp['temp_min'] - 273.15) < min_v:
             min_v = (f.temp['temp_min'] - 273.15)
-        if (f.temp['temp_max'] - 273.15) > min_v:
+        if (f.temp['temp_max'] - 273.15) > max_v:
             max_v = (f.temp['temp_max'] - 273.15)
         if f.detailed_status in description:
             description[f.detailed_status] = description[f.detailed_status] + 1

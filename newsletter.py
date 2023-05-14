@@ -32,7 +32,6 @@ def get_dayOfWeek():
     f.close()
     return dow
 
-
 # Method for sending mail containing the newsletter
 def send_mail(content):
     s = smtplib.SMTP(MAILSERVER, PORT)
@@ -61,7 +60,6 @@ def get_weather(location):
 
 # Outlook Calendar API
 def get_appointments(__location__):
-    # TODO: Get diffrent Calendar providers
     return assignmentRequest.getAssignments(NAME, __location__)
 
 # TODO: Get Stockmarket data
@@ -70,7 +68,6 @@ def get_stockData():
 
 
 __location__ = os.path.dirname(os.path.abspath(__file__))
-print(__location__)
 
 # Define global variables
 global SENDER
@@ -205,6 +202,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                             else:
                                 content = Template(content).safe_substitute(wikiTemplate="")
 
+                            # Set events int template
                             if events:
                                 eventsSnipped = snipped['EVENTS']
                                 eventsSnipped = Template(eventsSnipped).safe_substitute(eventsToday=events)
