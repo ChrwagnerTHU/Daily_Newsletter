@@ -55,12 +55,14 @@ def getAssignments(USER, __location__):
 
         if (today_min <= start <= today_max) or ([dt for dt in occurrences if today_min <= dt <= today_max]) :
             if start.time() == time.min:
-                appointments = appointments + event.get("SUMMARY") + "<br>"
+                appointments = appointments + event.get("SUMMARY") + "<br><br>"
             elif end >= tomorrow :
-                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " Uhr<br>"
+                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " Uhr<br><br>"
             else:
-                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " bis: " + str(event.get("DTEND").dt.strftime("%H:%M")) + " Uhr<br>"
-        
+                appointments = appointments + event.get("SUMMARY") + " von: " + str(event.get("DTSTART").dt.strftime("%H:%M")) + " bis: " + str(event.get("DTEND").dt.strftime("%H:%M")) + " Uhr<br><br>"
+    
+    # Remove last <br>
+    appointments = appointments[:-4]
     return appointments
     
 
