@@ -3,6 +3,7 @@
         "light rain": "Leichter Regen",
         "overcast clouds": "Bedeckt",
         "broken clouds": "Teilweise Bedeckt",
-        "few clouds": "Leicht Bedeckt"
+        "few clouds": "Leicht Bewölkt",
+        "scattered clouds": "Vereinzelt Bewölkt"
     }
 }
