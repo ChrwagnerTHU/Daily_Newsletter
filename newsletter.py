@@ -17,6 +17,7 @@ import assignmentRequest
 import wikiRand
 import eventsToday
 import weather
+import dishRand
 
 
 
@@ -95,6 +96,7 @@ with open (__location__ + "/ressource/config.json", "r") as f:
     # Dictionary to store events on runtime 
     requests = {"WEATHER": {},
                 "EVENTS": {},
+                "DISH": {}
                 }
 
     
@@ -143,6 +145,13 @@ with open (__location__ + "/ressource/config.json", "r") as f:
 
                         # Get random Wikipedia Article
                         wiki = wikiRand.main()
+
+                        # Get random Dish
+                        if not requests['DISH']:
+                            dish = dishRand.getRecipe()
+                            requests['DISH'].update(dish)
+                        else:
+                            dish = requests['DISH']
 
                         # Get Mail Template
                         mailTemplate = open(__location__ + '/ressource/mailTemplate.html', 'r')
@@ -201,6 +210,16 @@ with open (__location__ + "/ressource/config.json", "r") as f:
                                 content = Template(content).safe_substitute(wikiTemplate=wikiSnipped)
                             else:
                                 content = Template(content).safe_substitute(wikiTemplate="")
+
+                            # Set Dish article into Template
+                            if dish:
+                                dishSnipped = snipped['DISH']
+                                dishSnipped = Template(dishSnipped).safe_substitute(dishUrl=dish['Link'])
+                                dishSnipped = Template(dishSnipped).safe_substitute(dishText=dish['Title'])
+                                dishSnipped = Template(dishSnipped).safe_substitute(dishImg=dish['Img'])
+                                content = Template(content).safe_substitute(dishTemplate=dishSnipped)
+                            else:
+                                content = Template(content).safe_substitute(dishTemplate="")
 
                             # Set events int template
                             if events:
