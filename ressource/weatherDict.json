@@ -4,6 +4,7 @@
         "overcast clouds": "Bedeckt",
         "broken clouds": "Teilweise Bedeckt",
         "few clouds": "Leicht Bewölkt",
-        "scattered clouds": "Vereinzelt Bewölkt"
+        "scattered clouds": "Vereinzelt Bewölkt",
+        "clear sky": "Klar"
     }
 }
